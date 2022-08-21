@@ -1,0 +1,52 @@
+.nav-link {
+    color: #fff;
+}
+.nav-link:focus, .nav-link:hover{
+    color: rgb(211, 204, 204);
+}
+
+.nav-link img {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    margin: -8px 0;
+    float: left;
+    margin-right: 10px;
+}
+
+.container-main{
+    min-height: 75vh;
+}
+
+#loading-page::before {
+    content: '';
+    display: block;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgb(0 0 0 / 32%);
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+#loading-page{
+    height: 75px;
+    width: 300px;
+    position: fixed;
+    z-index: 9999;
+    top: 40%;
+    left: 40%;
+    font-size: 12pt;
+    display: none;
+    line-height: 75px;
+    text-align: center;
+    color: green;
+    font-weight: bold;
+}
+#loading-page img{
+    width: 75px;
+    height: 75px;
+    position: absolute;
+    text-align: center;
+    left: 110px;
+}

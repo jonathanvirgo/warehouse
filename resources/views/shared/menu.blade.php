@@ -1,25 +1,33 @@
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Fixed navbar</a>
+    <a class="navbar-brand" href="{{ url('/') }}">Warehouse</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link active" href="{{ url('/import/index') }}">Nhập kho</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <a class="nav-link" href="{{ url('/export/index') }}">Xuất kho</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+          <a class="nav-link" href="{{ url('/pay/index') }}">Thanh toán</a>
         </li>
       </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+      <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-bs-toggle="dropdown" aria-expanded="true">
+              <img src="{{ Voyager::image( Auth::user()->avatar ) }}" class="avatar" alt="Avatar"> {{Auth::user()->name}} <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdown03" data-bs-popper="none">
+              <a href="#" class="dropdown-item"><i class="fa fa-user-o"></i> Profile</a>
+              <a href="#" class="dropdown-item"><i class="fa fa-calendar-o"></i> Calendar</a>
+              <a href="#" class="dropdown-item"><i class="fa fa-sliders"></i> Settings</a>
+              <div class="dropdown-divider"></div>
+              <a href="{{ url('/logout') }}" class="dropdown-item"><i class="material-icons"></i> Logout</a>
+            </ul>
+      </div>
     </div>
   </div>
 </nav>

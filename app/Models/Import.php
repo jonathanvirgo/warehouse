@@ -6,6 +6,21 @@ use App\Models\Product;
 
 class Import extends Model{
     protected $table    = 'imports';
+    protected $fillable = [
+        'pro_id',
+        'total',
+        'price',
+        'report_date',
+        'note',
+        'created_by',
+        'created_at',
+        'updated_at'
+    ];
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }
 
     public function product()
     {
