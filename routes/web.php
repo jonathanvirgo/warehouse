@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('pay/store', 'PayController@store');
     Route::get('pay/list', 'PayController@list');
     Route::get('export/list', 'ExportController@list');
+    Route::get('dept/list', 'PayController@deptList');
 });
 
 Route::group(['prefix' => 'admin'], function () {

@@ -90,4 +90,22 @@ class PayController extends Controller
             return $e->getMessage();
         }
     }
+
+    public function deptList(Request $request){
+        $user       = Auth::user();
+        try {
+            if(Auth::check()){
+                $pays = PayService::getAllDept();
+                return view('table.pay',compact(
+                    'pays'
+                ));
+            }else{
+                $message = 'Liên kết không tồn tại';
+                return view('404', compact('message'));
+            }
+        } catch (Exception $e) {
+            LogActivityService::addToLog('listImport-catch', $e->getMessage());
+            return $e->getMessage();
+        }
+    }
 }
