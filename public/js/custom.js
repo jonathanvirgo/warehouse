@@ -106,13 +106,21 @@ function validateData(type){
         displayError("Bạn chưa nhập số lượng!");
         return false;
     }else{
-        let max = parseInt($('input[id="total"]').attr("max"));
-        if(totalArr && totalArr > 0){
-            max = max - totalArr;
-        }
-        if(max && $('#total').val() > max){
-            displayError("Bạn nhập quá số lượng nhập: " + max +" !");
-            return false;
+        if(type == 3){
+            let arrPro = arrPay.filter(s => s.pro_id == $('#list_product').val());
+            if(arrPro.length > 0){
+                for(let item of arrPro){
+                    totalArr += item.total;
+                }
+            }
+            let max = parseInt($('input[id="total"]').attr("max"));
+            if(totalArr && totalArr > 0){
+                max = max - totalArr;
+            }
+            if(max && $('#total').val() > max){
+                displayError("Bạn nhập quá số lượng nhập: " + max +" !");
+                return false;
+            }
         }
     }
 
@@ -153,13 +161,7 @@ function addPay(){
     arrPay.push(dataPay);
     let html = addPayHtml(dataPay);
     $(".table-responsive").find("tbody").append(html);
-    console.log("arrPay", arrPay);
-    let arrPro = arrPay.filter(s => s.pro_id == pro_id);
-    if(arrPro.length > 0){
-        for(let item of arrPro){
-            totalArr += item.total;
-        }
-    }
+    totalArr = 0;
 }
 
 function addImportHtml(dataImport){

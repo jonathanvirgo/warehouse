@@ -18,7 +18,7 @@ class ImportController extends Controller
         $user       = Auth::user();
         try {
             if(Auth::check()){
-                $products   = ProductService::getAllProduct();
+                $products   = ProductService::getSearchProduct();
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
                 return view('common.import',compact(
                     'products',
