@@ -3,6 +3,8 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
+use App\Models\TypeProduct;
+use App\Models\User;
 
 class Import extends Model{
     protected $table    = 'imports';
@@ -13,6 +15,7 @@ class Import extends Model{
         'report_date',
         'note',
         'created_by',
+        'type_id',
         'created_at',
         'updated_at'
     ];
@@ -25,5 +28,10 @@ class Import extends Model{
     public function product()
     {
         return $this->belongsTo(Product::class, 'pro_id', 'id');
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(TypeProduct::class, 'type_id', 'id');
     }
 }

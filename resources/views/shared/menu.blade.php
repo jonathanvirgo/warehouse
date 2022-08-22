@@ -7,13 +7,13 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
         <li class="nav-item">
-          <a class="nav-link active" href="{{ url('/import/index') }}">Nhập kho</a>
+          <a class="nav-link {{ request()->path() === 'import/index' ? 'active' : '' }}" href="{{ url('/import/index') }}">Nhập kho</a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link" href="{{ url('/export/index') }}">Xuất kho</a>
-        </li>
+        </li> -->
         <li class="nav-item">
-          <a class="nav-link" href="{{ url('/pay/index') }}">Thanh toán</a>
+          <a class="nav-link {{ request()->path() === 'pay/index' ? 'active' : '' }}" href="{{ url('/pay/index') }}">Thanh toán</a>
         </li>
       </ul>
       <div class="nav-item dropdown">

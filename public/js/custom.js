@@ -70,33 +70,73 @@ function addData(type){
     //type 1 Import
     //type 2 Export
     //type 3 Pay
-    switch(type){
-        case 1:
-            addImport();
-            $("#dataTable").show();
-            break;
-        case 2:
-            addExport();
-            $("#dataTable").show();
-            break;
-        case 3:
-            addPay();
-            $("#dataTable").show();
-            break;
-        default: break;
+    let valid = validateData(type);
+    if(valid){
+        switch(type){
+            case 1:
+                addImport();
+                $("#dataTable").show();
+                break;
+            case 2:
+                addExport();
+                $("#dataTable").show();
+                break;
+            case 3:
+                addPay();
+                $("#dataTable").show();
+                break;
+            default: break;
+        }
+        resetInput(type);
     }
-    resetInput(type);
+}
+
+function validateData(type){
+    if(!$('#list_product').val() || $('#list_product').val() == 0){
+        displayError("Bạn chưa chọn sản phẩm!");
+        return false;
+    }
+    
+    if(!$('#price').val() || $('#price').val() == 0){
+        displayError("Bạn chưa nhập giá!");
+        return false;
+    }
+
+    if(!$('#total').val() || $('#total').val() == 0){
+        displayError("Bạn chưa nhập số lượng!");
+        return false;
+    }else{
+        let max = parseInt($('input[id="total"]').attr("max"));
+        if(totalArr && totalArr > 0){
+            max = max - totalArr;
+        }
+        if(max && $('#total').val() > max){
+            displayError("Bạn nhập quá số lượng nhập: " + max +" !");
+            return false;
+        }
+    }
+
+    // switch(type){
+    //     case 1:
+    //         break;
+    //     case 2:
+    //         break;
+    //     case 3:
+    //         break;
+    //     default: break;
+    // }
+    return true;
 }
 
 function addImport(){
     let pro_id          = $('#list_product').val();
     let pro_name        = $('#list_product option:selected').text();
-    let price_import    = $('#price_import').val();
+    let price           = $('#price').val();
     let total           = $('#total').val();
     let paied           = $('#confirm_pay').is(":checked");
     let report_date     = $('#report_date').val();
     let note            = $('#note').val();
-    let dataImport = {"id": arrImport.length,"pro_id": pro_id, "pro_name": pro_name, "price_import": price_import, "total": total, "paied": paied, "note": note, "report_date": report_date};
+    let dataImport = {"id": arrImport.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "paied": paied, "note": note, "report_date": report_date};
     arrImport.push(dataImport);
     let html = addImportHtml(dataImport);
     $(".table-responsive").find("tbody").append(html);
@@ -114,6 +154,12 @@ function addPay(){
     let html = addPayHtml(dataPay);
     $(".table-responsive").find("tbody").append(html);
     console.log("arrPay", arrPay);
+    let arrPro = arrPay.filter(s => s.pro_id == pro_id);
+    if(arrPro.length > 0){
+        for(let item of arrPro){
+            totalArr += item.total;
+        }
+    }
 }
 
 function addImportHtml(dataImport){
@@ -142,11 +188,10 @@ function addImportHtml(dataImport){
     td7.append(span2);
     td7.append(span1);
     
-
     $(td1).text(dataImport.pro_name);
-    $(td2).text(dataImport.price_import);
+    $(td2).text(dataImport.price);
     $(td3).text(dataImport.total);
-    $(td4).text(dataImport.paied);
+    $(td4).text(dataImport.paied ? 'Đã thanh toán' : 'Công nợ');
     $(td5).text(dataImport.report_date);
     $(td6).text(dataImport.note);
     $(div).attr('id', 'tr_'+dataImport.id);
@@ -180,7 +225,7 @@ function addPayHtml(dataImport){
     $(span2).text("edit");
     $(span1).click(function(){
         let id = $(this).data('id');
-        deleteArr(id, 1);
+        deleteArr(id, 3);
     });
     td6.append(span2);
     td6.append(span1);
@@ -222,6 +267,17 @@ function deleteArr(index, type){
                                 $("#dataTable").hide();
                             }
                             break;
+                        case 3:
+                            for(let [i, item] of arrPay.entries()){
+                                if(item.id == index){   
+                                    $('#tr_'+index).remove();
+                                    arrPay.splice(i, 1);
+                                }
+                            }
+                            if(arrPay.length == 0){
+                                $("#dataTable").hide();
+                            }
+                            break;
                         default: break;
                     }
                 },
@@ -240,12 +296,13 @@ function deleteArr(index, type){
 }
 
 function resetInput(type){
+    $('#list_product').val(0).trigger('change');
+    $('#price').val("");
+    $('#total').val("");
+    $('#confirm_pay').prop('checked', false);
     switch(type){
         case 1:
-            $('#list_product').val(0).trigger('change');
-            $('#price_import').val("");
-            $('#total').val("");
-            $('#confirm_pay').prop('checked', false);
+            
             break;
         default: break;
     }
@@ -313,3 +370,4 @@ function callAjaxSave(url, data){
         }   
     });
 }
+

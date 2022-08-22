@@ -1,6 +1,6 @@
 @extends('shared.master')
 
-@section('page') Đăng nhập @stop
+@section('page') Xuất kho @stop
 
 @section('canonical'){{ URL::current() }}@stop
 

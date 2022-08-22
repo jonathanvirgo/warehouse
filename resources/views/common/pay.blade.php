@@ -1,6 +1,6 @@
 @extends('shared.master')
 
-@section('page') Đăng nhập @stop
+@section('page') Thanh toán @stop
 
 @section('canonical'){{ URL::current() }}@stop
 
@@ -23,7 +23,7 @@
                         <option value="0">Chọn sản phẩm</option>
                         @if (!empty($products))
                             @foreach ($products as $item)
-                                <option value="{{ $item['pro_id'] }}" data-id="{{$item['id']}}" data-price="{{$item['price']}}" data-total="{{$item['total']}}">{{ $item->product->name }}</option>
+                                <option value="{{ $item['pro_id'] }}" data-id="{{$item['id']}}" data-price="{{$item['price']}}" data-total="{{$item['total']}}">{{ $item->product->name. ' | '. $item['price'] . ' | ' . $item['total'] }}</option>
                             @endforeach
                         @endif
                     </select>
@@ -44,7 +44,7 @@
             <div class="col-12 col-sm-6 mb-2">
                 <div class="form-group">
                     <label for="report_date" class="mb-1">Ngày thanh toán</label>
-                    <input type="text" class="form-control" id="report_date" value="">
+                    <input type="text" class="form-control" id="report_date" value="{{$today}}">
                 </div>
             </div>
             <div class="col-12 mb-2">
@@ -89,15 +89,12 @@
     <script>
         let id_debt = 0;
         let arrPay = [];
-        $('#list_product').on('select2:select', function () {
+        let totalArr = 0;
+        $('#list_product').on('select2:select', function (e) {
             let price = $('#list_product option:selected').data('price');
             $('input[id="price"]').val(price);
             $('input[id="total"]').attr({"max": $('#list_product option:selected').data('total')});
             id_debt = $('#list_product option:selected').data('id');
-        });
-
-        $(document).ready(function(){
-            $("#dataTable").hide();
         });
     </script>
 @stop

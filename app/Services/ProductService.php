@@ -6,12 +6,13 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Debt;
+use App\Services\LogActivityService;
 
 class ProductService
 {
     public static function getAllProduct(){
         try {
-            $products = Product::all();
+            $products = Product::with('type')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getAllProduct-catch', $e->getMessage());

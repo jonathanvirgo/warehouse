@@ -1,6 +1,6 @@
 @extends('shared.master')
 
-@section('page') Dashboard @stop
+@section('page') Bảng xuất kho @stop
 
 @section('canonical'){{ URL::current() }}@stop
 
@@ -11,6 +11,7 @@
 @stop
 
 @section('content')
+<div class="container-main">
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Dashboard</h1>
   </div>
@@ -142,6 +143,8 @@
       </tbody>
     </table>
   </div>
+</div>
+  
 @stop
 
 @section('pageJs')

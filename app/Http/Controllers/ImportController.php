@@ -10,7 +10,7 @@ use App\Services\ImportService;
 use App\Services\LogActivityService;
 use App\Models\Import;
 use App\Models\Debt;
-use App\Models\Store;
+use App\Models\Product;
 
 class ImportController extends Controller
 {
@@ -18,9 +18,11 @@ class ImportController extends Controller
         $user       = Auth::user();
         try {
             if(Auth::check()){
-                $products = ProductService::getAllProduct();
+                $products   = ProductService::getAllProduct();
+                $today      = date('d-m-Y', strtotime(Carbon::today()));
                 return view('common.import',compact(
-                    'products'
+                    'products',
+                    'today'
                 ));
             }else{
                 $message = 'Liên kết không tồn tại';
@@ -34,7 +36,7 @@ class ImportController extends Controller
 
     public function store(Request $request){
         $user   = Auth::user();
-        $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/post/list');
+        $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/import/list');
 
         try {
             if($request->has('arrImport')){
@@ -44,27 +46,25 @@ class ImportController extends Controller
                         $inputs = [
                             "pro_id"        => $item->pro_id,
                             "total"         => (int)$item->total,
-                            "price"         => (int)$item->price_import,
+                            "price"         => (int)$item->price,
                             "report_date"   => date('Y-m-d', strtotime($item->report_date)),
                             "note"          => $item->note,
                             "created_by"    => $user->id
                         ];
                         Import::create($inputs);
+                        $product = Product::find($item->pro_id);
+                        if($product){
+                            $total = $product->total + $inputs['total'];
+                            $product->update(["total" => $total]);
+                        }
                         if($item->paied == false){
-                            $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price_import)->first();
+                            $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price)->first();
                             if($dept){
                                 $total = $dept->total + $inputs['total'];
-                                $dept->update(["total" => $total]);
+                                $dept->update(["total" => $total, "type_id" => (int)$product->type_id]);
                             }else{
                                 Debt::create($inputs);
                             }
-                        }
-                        $store = Store::where("pro_id", $item->pro_id)->first();
-                        if($store){
-                            $total = $store->total + $inputs['total'];
-                            $store->update(["total" => $total]);
-                        }else{
-                            Store::create($inputs);
                         }
                     }
                 }else{
@@ -89,16 +89,41 @@ class ImportController extends Controller
         try {
             if(Auth::check()){
                 $fromdate       = Carbon::now()->addDays(-30)->format('d-m-Y');
-                $todate         = Carbon::now()->addDays(60)->format('d-m-Y');
-                $imports        = ImportService::getAllImport();
+                $todate         = Carbon::now()->addDays(30)->format('d-m-Y');
                 $search         = (object)[
-                    'reportdate'  => $request->get('reportdate', $fromdate.' - '.$todate)
+                    'reportdate'  => $request->get('reportdate', $fromdate.' - '.$todate),
+                    'order_by'    => $request->get('order_by','id|desc'),
+                    'pro_id'      => $request->get('pro_id', 0),
                 ];
+                if ($search->reportdate) {
+                    $time     = explode(' - ', trim($search->reportdate), 2);
+                    $fromdate = date('d-m-Y', strtotime($time[0]));
+                    $todate   = date('d-m-Y', strtotime($time[1]));
+                }
+                $orders_by = [
+                    ['id' => 'id|asc',        'name' => 'Ngày tạo tăng dần'],
+                    ['id' => 'id|desc',       'name' => 'Ngày tạo giảm dần'],
+                    ['id' => 'price|asc',     'name' => 'Giá tăng dần'],
+                    ['id' => 'price|desc',    'name' => 'Giá giảm dần'],
+                    ['id' => 'total|asc',     'name' => 'Số lượng tăng dần'],
+                    ['id' => 'total|desc',     'name' => 'Số lượng giảm dần'],
+                    ['id' => 'report_date|asc', 'name' => 'Ngày nhập tăng dần'],
+                    ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
+                ];
+                $products       = ImportService::getSearchProduct();
+                $imports        = ImportService::getAllImport($search);
+                $totalPrice = 0;
+                foreach($imports as $item){
+                    $totalPrice += $item['price'] * $item['total'];
+                }
                 return view('table.import',compact(
                     'imports',
                     'todate',
                     'fromdate',
-                    'search'
+                    'search',
+                    'orders_by',
+                    'products',
+                    'totalPrice'
                 ));
             }else{
                 $message = 'Liên kết không tồn tại';

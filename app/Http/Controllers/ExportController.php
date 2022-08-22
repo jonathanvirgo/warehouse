@@ -32,7 +32,7 @@ class ExportController extends Controller
                 return view('404', compact('message'));
             }
         } catch (Exception $e) {
-            LogActivityService::addToLog('listImport-catch', $e->getMessage());
+            LogActivityService::addToLog('listExport-catch', $e->getMessage());
             return $e->getMessage();
         }
     }

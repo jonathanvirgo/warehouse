@@ -1,6 +1,6 @@
 @extends('shared.master')
 
-@section('page') Đăng nhập @stop
+@section('page') Trang trống @stop
 
 @section('canonical'){{ URL::current() }}@stop
 

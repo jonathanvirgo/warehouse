@@ -1,6 +1,6 @@
 @extends('shared.master')
 
-@section('page') Đăng nhập @stop
+@section('page') Nhập kho @stop
 
 @section('canonical'){{ URL::current() }}@stop
 
@@ -23,7 +23,7 @@
                         <option value="0">Chọn sản phẩm</option>
                         @if (!empty($products))
                             @foreach ($products as $item)
-                                <option value="{{ $item['id'] }}" data-price_import="{{$item['price_import']}}">{{ $item["name"] }}</option>
+                                <option value="{{ $item['id'] }}" data-price_import="{{$item['price_import']}}" data-price_export="{{$item['price_export']}}">{{ $item["name"] }}</option>
                             @endforeach
                         @endif
                     </select>
@@ -31,8 +31,8 @@
             </div>
             <div class="col-12 col-sm-6 mb-2">
                 <div class="form-group">
-                    <label for="price_import" class="mb-1">Giá</label>
-                    <input id="price_import" min="1000" type="number" class="form-control" placeholder="Giá nhập">
+                    <label for="price" class="mb-1">Giá</label>
+                    <input id="price" min="1000" type="number" class="form-control" placeholder="Giá nhập">
                 </div>
             </div>
             <div class="col-12 col-sm-6 mb-2">
@@ -44,7 +44,7 @@
             <div class="col-12 col-sm-6 mb-2">
                 <div class="form-group">
                     <label for="report_date" class="mb-1">Ngày nhập</label>
-                    <input type="text" class="form-control" id="report_date" value="">
+                    <input type="text" class="form-control" id="report_date" value="{{$today}}">
                 </div>
             </div>
             <div class="col-12 col-sm-12 col-md-12 col-lg-8 mb-2">
@@ -93,12 +93,10 @@
 @section('pageJs')
 <script>
     let arrImport = [];
+    let totalArr = 0;
     $('#list_product').on('select2:select', function () {
         let price_import = $('#list_product option:selected').data('price_import');
-        $('input[id="price_import"]').val(price_import);
-    });
-    $(document).ready(function(){
-        $("#dataTable").hide();
+        $('input[id="price"]').val(price_import);
     });
 </script>
 @stop
