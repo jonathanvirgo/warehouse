@@ -20,12 +20,6 @@
       <div class="row mb-3">
         <div class="col-12 col-sm-6 col-md-6 col-lg-4">
             <div class="form-group">
-                <label class=" mb-1"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> Ngày</label>
-                <input type="text" class="form-control" id="reportdate" name="reportdate" value="{{ $search->reportdate }}">
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-            <div class="form-group">
                 <label class="mb-1"> <i class="fa fa-address-book-o" aria-hidden="true"></i> Tên sản phẩm</label>
                 <select id="list_product" class="form-control select2" name="pro_id">
                     <option value="0">Tất cả sản phẩm</option>
@@ -89,34 +83,6 @@
 
 @section('pageJs')
   <script>
-      $(function() {
-        var start = '{{$fromdate}}';
-        var end   = '{{$todate}}';
-
-        function cb(start, end) {
-          $('#reportdate').val(start.format('DD-MM-YYYY') + ' - ' + end.format('DD-MM-YYYY'));
-        }
-        $('#reportdate').daterangepicker({
-          startDate: start,
-          endDate: end,
-          locale: {
-            format: 'DD-MM-YYYY'
-          },
-          ranges: {
-          'Today': [moment(), moment()],
-          'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-          'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-          'This Month': [moment().startOf('month'), moment().endOf('month')],
-          'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        }
-      }, cb);
-    });
-
-    $('#reportdate').on('apply.daterangepicker', function(ev, picker) {
-      $("#search_form").submit();
-    });
-
     $('#list_product').on('select2:select', function (e) {
       $("#search_form").submit();
     });

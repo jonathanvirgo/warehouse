@@ -138,18 +138,18 @@ class PayController extends Controller
         $user       = Auth::user();
         try {
             if(Auth::check()){
-                $fromdate       = Carbon::now()->addDays(-30)->format('d-m-Y');
-                $todate         = Carbon::now()->addDays(30)->format('d-m-Y');
+                // $fromdate       = Carbon::now()->addDays(-30)->format('d-m-Y');
+                // $todate         = Carbon::now()->addDays(30)->format('d-m-Y');
                 $search         = (object)[
-                    'reportdate'  => $request->get('reportdate', $fromdate.' - '.$todate),
+                    // 'reportdate'  => $request->get('reportdate', $fromdate.' - '.$todate),
                     'order_by'    => $request->get('order_by','id|desc'),
-                    'pro_id'      => $request->get('pro_id', 0),
+                    'pro_id'      => $request->get('pro_id', 0)
                 ];
-                if ($search->reportdate) {
-                    $time     = explode(' - ', trim($search->reportdate), 2);
-                    $fromdate = date('d-m-Y', strtotime($time[0]));
-                    $todate   = date('d-m-Y', strtotime($time[1]));
-                }
+                // if ($search->reportdate) {
+                //     $time     = explode(' - ', trim($search->reportdate), 2);
+                //     $fromdate = date('d-m-Y', strtotime($time[0]));
+                //     $todate   = date('d-m-Y', strtotime($time[1]));
+                // }
                 $orders_by = [
                     ['id' => 'id|asc',        'name' => 'Ngày tạo tăng dần'],
                     ['id' => 'id|desc',       'name' => 'Ngày tạo giảm dần'],
@@ -157,8 +157,8 @@ class PayController extends Controller
                     ['id' => 'price|desc',    'name' => 'Giá giảm dần'],
                     ['id' => 'total|asc',     'name' => 'Số lượng tăng dần'],
                     ['id' => 'total|desc',     'name' => 'Số lượng giảm dần'],
-                    ['id' => 'report_date|asc', 'name' => 'Ngày nhập tăng dần'],
-                    ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
+                    // ['id' => 'report_date|asc', 'name' => 'Ngày nhập tăng dần'],
+                    // ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
                 ];
                 $products   = PayService::getSearchProduct();
                 $depts      = PayService::getAllDept($search);
@@ -168,8 +168,6 @@ class PayController extends Controller
                 }
                 return view('table.debt',compact(
                     'depts',
-                    'fromdate',
-                    'todate',
                     'search',
                     'products',
                     'orders_by',

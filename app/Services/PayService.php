@@ -39,16 +39,16 @@ class PayService
 
     public static function getAllDept($search){
         try {
-            $query = Debt::with('product');
-            if ($search->reportdate) {
-                $time = explode(' - ', trim($search->reportdate), 2);
-                if ($time[0] == $time[1]) {
-                    $query->whereDate('report_date', date('Y-m-d', strtotime($time[0])));
-                } else {
-                    $query->whereDate('report_date', '>=', date('Y-m-d', strtotime($time[0])))
-                          ->whereDate('report_date', '<=', date('Y-m-d', strtotime($time[1])));
-                }
-            }
+            $query = Debt::where('total','>',0)->with('product');
+            // if ($search->reportdate) {
+            //     $time = explode(' - ', trim($search->reportdate), 2);
+            //     if ($time[0] == $time[1]) {
+            //         $query->whereDate('report_date', date('Y-m-d', strtotime($time[0])));
+            //     } else {
+            //         $query->whereDate('report_date', '>=', date('Y-m-d', strtotime($time[0])))
+            //               ->whereDate('report_date', '<=', date('Y-m-d', strtotime($time[1])));
+            //     }
+            // }
 
             if((int)$search->pro_id !== 0){
                 $query->where("pro_id", $search->pro_id);

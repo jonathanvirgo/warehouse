@@ -32,7 +32,7 @@ class ProductService
 
     public static function getAllDebt(){
         try {
-            $products = Debt::with('product')->get();
+            $products = Debt::where('total','>',0)->with('product')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getAllDebt-catch', $e->getMessage());

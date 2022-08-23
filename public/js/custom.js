@@ -332,7 +332,7 @@ function save(type){
                             break;
                         default: break;
                     }
-                    callAjaxSave(url, data);
+                    callAjax(url, data);
                 },
                 btnClass: 'btn-success',
                 keys: ['enter']
@@ -348,7 +348,7 @@ function save(type){
     });
 }
 
-function callAjaxSave(url, data){
+function callAjax(url, data){
     let loading      = $("#loading-page");
     $.ajax({
         url: url,
@@ -373,3 +373,40 @@ function callAjaxSave(url, data){
     });
 }
 
+function deleteTable(id, type){
+    let url ="";
+    let data = {};
+    $.confirm({
+        title: 'Bạn có chắc chắn muốn xoá không?',
+        content: '',
+        theme: 'Bootstrap',
+        buttons: {
+            accept:{
+                text: 'Đồng ý',
+                action:function () {
+                    switch(type){
+                        case 1:
+                            url = "/import/delete";
+                            data = {"id" : id};
+                            break;
+                        case 3:
+                            url = "/pay/delete";
+                            data = {"id" : id};
+                            break;
+                        default: break;
+                    }
+                    callAjax(url, data);
+                },
+                btnClass: 'btn-success',
+                keys: ['enter']
+            },
+            reject:{
+                text: 'Không',
+                btnClass: 'btn-danger',
+                action:function () {
+                },
+                keys: ['esc']
+            }
+        }
+    });
+}
