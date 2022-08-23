@@ -39,7 +39,7 @@ class ImportController extends Controller
         $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/import/list');
 
         try {
-            if($request->has('arrImport')){
+            if($request->has('arrImport') && Auth::check()){
                 $arrImport = json_decode($request->arrImport);
                 if(count($arrImport) > 0){
                     foreach($arrImport as $item){

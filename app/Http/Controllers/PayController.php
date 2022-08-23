@@ -38,7 +38,7 @@ class PayController extends Controller
         $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/pay/list');
 
         try {
-            if($request->has('arrPay')){
+            if($request->has('arrPay') && Auth::check()){
                 $arrPay = json_decode($request->arrPay);
                 if(count($arrPay) > 0){
                     foreach($arrPay as $item){
