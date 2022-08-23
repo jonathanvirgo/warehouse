@@ -160,7 +160,7 @@ class PayController extends Controller
                     // ['id' => 'report_date|asc', 'name' => 'Ngày nhập tăng dần'],
                     // ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
                 ];
-                $products   = PayService::getSearchProduct();
+                $products   = PayService::getSearchProductDept();
                 $depts      = PayService::getAllDept($search);
                 $totalPrice = 0;
                 foreach($depts as $item){

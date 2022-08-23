@@ -66,18 +66,18 @@ class PayService
         }
     }
 
-    public static function getSearchProduct(){
+    public static function getSearchProductPay(){
         try {
-            $products = Debt::select("pro_id")->distinct()->with('product')->get();
+            $products = Pay::select("pro_id")->distinct()->with('product')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getSearchProductPay-catch', $e->getMessage());
         }
     }
 
-    public static function getSearchProductPay(){
+    public static function getSearchProductDept(){
         try {
-            $products = Pay::select("pro_id")->distinct()->with('product')->get();
+            $products = Debt::select("pro_id")->distinct()->where('total','>',0)->with('product')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getSearchProductPay-catch', $e->getMessage());
