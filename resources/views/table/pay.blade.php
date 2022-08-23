@@ -114,7 +114,7 @@
       }, cb);
     });
 
-    $('#daterange').on('apply.daterangepicker', function(ev, picker) {
+    $('#reportdate').on('apply.daterangepicker', function(ev, picker) {
       $("#search_form").submit();
     });
 
