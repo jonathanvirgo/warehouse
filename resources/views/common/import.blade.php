@@ -109,12 +109,12 @@
     let totalArr = 0;
     $('#list_product').on('select2:select', function (e) {
         let warehouse   = $('#list_warehouse').val();
-        getPrice(e.params.data.id, warehouse, 1);
+        getPrice(e.params.data.id, warehouse, 'nhap');
     });
 
     $('#list_warehouse').on('select2:select', function (e) {
         let pro_id   = $('#list_product').val();
-        getPrice(pro_id, e.params.data.id, 1);
+        getPrice(pro_id, e.params.data.id, 'nhap');
     });
 </script>
 @stop

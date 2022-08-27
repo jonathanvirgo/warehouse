@@ -25,10 +25,13 @@
           <a class="nav-link nav-hide {{ request()->path() === 'dept/list' ? 'active' : '' }}" href="{{ url('/dept/list') }}">Công nợ</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link nav-hide {{ request()->path() === 'import/list' ? 'active' : '' }}" href="{{ url('/import/list') }}">Danh sách nhập hàng</a>
+          <a class="nav-link nav-hide {{ request()->path() === 'import/list' ? 'active' : '' }}" href="{{ url('/import/list') }}">Danh sách nhập kho</a>
         </li>
         <li class="nav-item">
           <a class="nav-link nav-hide {{ request()->path() === 'pay/list' ? 'active' : '' }}" href="{{ url('/pay/list') }}">Danh sách thanh toán</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-hide {{ request()->path() === 'export/list' ? 'active' : '' }}" href="{{ url('/export/list') }}">Danh sách xuất kho</a>
         </li>
         @endif
       </ul>

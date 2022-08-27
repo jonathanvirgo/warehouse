@@ -3,14 +3,14 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use App\Models\Import;
+use App\Models\Export;
 use App\Services\LogActivityService;
 
-class ImportService
+class ExportService
 {
-    public static function getAllImport($search){
+    public static function getAllExport($search){
         try {
-            $query = Import::with('product');
+            $query = Export::with('product');
             if($search->warehouse_id){
                 $query->where("warehouse_id", $search->warehouse_id);
             }
@@ -29,12 +29,16 @@ class ImportService
                 $query->where("pro_id", $search->pro_id);
             }
 
+            if($search->type_discount){
+                $query->where("type_discount", $search->type_discount);
+            }
+
             if($search->order_by){
                 $order = explode('|', trim($search->order_by), 2);
                 $query->orderBy($order[0], $order[1]);
             }
-            $imports = $query->get();
-            return $imports;
+            $exports = $query->get();
+            return $exports;
         } catch (Exception $e) {
             LogActivityService::addToLog('getAllProduct-catch', $e->getMessage());
         }

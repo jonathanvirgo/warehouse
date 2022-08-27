@@ -54,9 +54,9 @@ class ProductController extends Controller
                 $inputs = [
                     "pro_id"        => (int)$request->pro_id,
                     "warehouse_id"  => (int)$request->warehouse_id,
-                    "is_import"     => (int)$request->is_import
+                    "im_export"     => $request->im_export
                 ];
-                $price = Price::select("price")->where("pro_id", $inputs['pro_id'])->where("warehouse_id", $inputs['warehouse_id'])->where('is_import', $inputs['is_import'])->first();
+                $price = Price::select("price")->where("pro_id", $inputs['pro_id'])->where("warehouse_id", $inputs['warehouse_id'])->where('im_export', $inputs['im_export'])->first();
                 $result['price'] = isset($price->price) ? $price->price : 0;
             }else{
                 $result['status'] = false;

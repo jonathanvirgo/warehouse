@@ -152,6 +152,29 @@ function addImport(){
     $(".table-responsive").find("tbody").append(html);
 }
 
+function addExport(){
+    let pro_id          = $('#list_product').val();
+    let pro_name        = $('#list_product option:selected').text();
+    let price_export    = $('#price').val();
+    let price_import    = $('#list_product option:selected').data('price');
+    let total           = $('#total').val();
+    let report_date     = $('#report_date').val();
+    let note            = $('#note').val();
+    let warehouse_id    = $('#list_warehouse').val();
+    let warehouse_name  = $('#list_warehouse option:selected').text();
+    let discount_percent = $('#discount_percent').val();
+    let discount_number = $('#discount_number').val();
+    let type_discount   = $('#list_discount').val();
+    let ship            = $('#ship').val();
+    let discount        = $('#discount').val() ? $('#discount').val() : 0;
+    let income          = parseInt(price_export) - parseInt(discount) - parseInt(price_import);
+
+    let dataExport = {"id": arrData.length,"pro_id": pro_id, "pro_name": pro_name, "price_export": price_export,"price_import": price_import, "total": total, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name, "discount_percent": discount_percent,"discount_number": discount_number, "ship":ship,"discount":discount, "income": income < 0 ? 0 : income, "type_discount": type_discount};
+    arrData.push(dataExport);
+    let html = addExportHtml(dataExport);
+    $(".table-responsive").find("tbody").append(html);
+}
+
 function addPay(){
     let pro_id          = $('#list_product').val();
     let pro_name        = $('#list_product option:selected').text();
@@ -168,7 +191,7 @@ function addPay(){
     totalArr = 0;
 }
 
-function addImportHtml(dataImport){
+function addImportHtml(data){
     let div   = document.createElement("tr");
     let td1  = document.createElement("td");
     let td2  = document.createElement("td");
@@ -183,8 +206,8 @@ function addImportHtml(dataImport){
     let span2 = document.createElement("span");
     $(span1).addClass('material-icons');
     $(span2).addClass('material-icons');
-    span1.dataset.id = dataImport.id;
-    span2.dataset.id = dataImport.id;
+    span1.dataset.id = data.id;
+    span2.dataset.id = data.id;
     $(span1).text("close");
     $(span1).css({"position":'relative', "left":"15px"});
     $(span2).text("edit");
@@ -195,14 +218,14 @@ function addImportHtml(dataImport){
     td8.append(span2);
     td8.append(span1);
     
-    $(td1).text(dataImport.pro_name);
-    $(td2).text(dataImport.price);
-    $(td3).text(dataImport.total);
-    $(td4).text(dataImport.paied ? 'Đã thanh toán' : 'Công nợ');
-    $(td5).text(dataImport.warehouse_name);
-    $(td6).text(dataImport.note);
-    $(td7).text(dataImport.report_date);
-    $(div).attr('id', 'tr_'+dataImport.id);
+    $(td1).text(data.pro_name);
+    $(td2).text(data.price);
+    $(td3).text(data.total);
+    $(td4).text(data.paied ? 'Đã thanh toán' : 'Công nợ');
+    $(td5).text(data.warehouse_name);
+    $(td6).text(data.note);
+    $(td7).text(data.report_date);
+    $(div).attr('id', 'tr_'+data.id);
     div.append(td1);
     div.append(td2);
     div.append(td3);
@@ -213,7 +236,55 @@ function addImportHtml(dataImport){
     return div;
 }
 
-function addPayHtml(dataImport){
+function addExportHtml(data){
+    let div   = document.createElement("tr");
+    let td1  = document.createElement("td");
+    let td2  = document.createElement("td");
+    let td3  = document.createElement("td");
+    let td4  = document.createElement("td");
+    let td5  = document.createElement("td");
+    let td6  = document.createElement("td");
+    let td7  = document.createElement("td");
+    let td8  = document.createElement("td");
+    let td9  = document.createElement("td");
+
+    let span1 = document.createElement("span");
+    let span2 = document.createElement("span");
+    $(span1).addClass('material-icons');
+    $(span2).addClass('material-icons');
+    span1.dataset.id = data.id;
+    span2.dataset.id = data.id;
+    $(span1).text("close");
+    $(span1).css({"position":'relative', "left":"15px"});
+    $(span2).text("edit");
+    $(span1).click(function(){
+        let id = $(this).data('id');
+        deleteArr(id, 2);
+    });
+    td9.append(span2);
+    td9.append(span1);
+    $(td1).text(data.pro_name);
+    $(td2).text(data.price_import);
+    $(td3).text(data.price_export);
+    $(td4).text(data.total);
+    $(td5).text(data.warehouse_name);
+    $(td6).text(data.discount);
+    $(td7).text(data.note);
+    $(td8).text(data.report_date);
+    $(div).attr('id', 'tr_'+data.id);
+    div.append(td1);
+    div.append(td2);
+    div.append(td3);
+    div.append(td4);
+    div.append(td5);
+    div.append(td6);
+    div.append(td7);
+    div.append(td8);
+    div.append(td9);
+    return div;
+}
+
+function addPayHtml(data){
     let div   = document.createElement("tr");
     let td1  = document.createElement("td");
     let td2  = document.createElement("td");
@@ -227,8 +298,8 @@ function addPayHtml(dataImport){
     let span2 = document.createElement("span");
     $(span1).addClass('material-icons');
     $(span2).addClass('material-icons');
-    span1.dataset.id = dataImport.id;
-    span2.dataset.id = dataImport.id;
+    span1.dataset.id = data.id;
+    span2.dataset.id = data.id;
     $(span1).text("close");
     $(span1).css({"position":'relative', "left":"15px"});
     $(span2).text("edit");
@@ -240,13 +311,13 @@ function addPayHtml(dataImport){
     td7.append(span1);
     
 
-    $(td1).text(dataImport.pro_name);
-    $(td2).text(dataImport.price);
-    $(td3).text(dataImport.total);
-    $(td4).text(dataImport.warehouse_name);
-    $(td5).text(dataImport.note);
-    $(td6).text(dataImport.report_date);
-    $(div).attr('id', 'tr_'+dataImport.id);
+    $(td1).text(data.pro_name);
+    $(td2).text(data.price);
+    $(td3).text(data.total);
+    $(td4).text(data.warehouse_name);
+    $(td5).text(data.note);
+    $(td6).text(data.report_date);
+    $(div).attr('id', 'tr_'+data.id);
     div.append(td1);
     div.append(td2);
     div.append(td3);
@@ -277,6 +348,7 @@ function deleteArr(index, type){
                                 $("#dataTable").hide();
                             }
                             break;
+                        case 2:
                         case 3:
                             for(let [i, item] of arrData.entries()){
                                 if(item.id == index){   
@@ -312,7 +384,6 @@ function resetInput(type){
     $('#confirm_pay').prop('checked', false);
     switch(type){
         case 1:
-            
             break;
         default: break;
     }
@@ -333,6 +404,10 @@ function save(type){
                         case 1:
                             url = "/import/store";
                             data = {"arrImport" : JSON.stringify(arrImport)};
+                            break;
+                        case 2:
+                            url = "/export/store";
+                            data = {"arrExport" : JSON.stringify(arrData)};
                             break;
                         case 3:
                             url = "/pay/store";
@@ -419,10 +494,10 @@ function deleteTable(id, type){
     });
 }
 
-function getPrice(pro_id, warehouse_id, is_import){
+function getPrice(pro_id, warehouse_id, im_export){
     let loading     = $("#loading-page");
     loading.show();
-    $.get('/product/price?pro_id='+ pro_id + '&warehouse_id=' + warehouse_id + '&is_import='+ is_import, function(response){
+    $.get('/product/price?pro_id='+ pro_id + '&warehouse_id=' + warehouse_id + '&im_export='+ im_export, function(response){
         loading.hide();
         if(response.status){
             $('#price').val(response.price == 0 ? '' : response.price);
@@ -463,4 +538,20 @@ function getInventory(warehouse_id){
             displayError(response.message);
         }
     });
+}
+
+function countDiscount(){
+    let discount_percent = $('#discount_percent').val();
+    let discount_number = $('#discount_number').val();
+    let ship            = $('#ship').val();
+    let price_export    = $('#price').val();
+    let discount;
+    if(price_export){
+        if(discount_percent){
+            discount = parseFloat(discount_percent) * parseInt(price_export) / 100;
+        }
+        if(discount_number) discount += parseInt(discount_number);
+        if(ship) discount += parseInt(ship);
+    }
+    $('#discount').val(discount);
 }

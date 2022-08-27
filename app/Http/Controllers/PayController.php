@@ -10,7 +10,7 @@ use App\Services\PayService;
 use App\Services\LogActivityService;
 use App\Models\Pay;
 use App\Models\Debt;
-use App\Models\TypeWarehouse;
+use App\Models\Warehouse;
 use App\Models\Product;
 
 class PayController extends Controller
@@ -22,7 +22,7 @@ class PayController extends Controller
                     'warehouse_id'  => $request->get('warehouse_id', 1)
                 ];
                 $products = ProductService::getAllDebt($search);
-                $warehouses = TypeWarehouse::all();
+                $warehouses = Warehouse::all();
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
                 return view('common.pay',compact(
                     'products',
@@ -114,7 +114,7 @@ class PayController extends Controller
 
                 $products   = ProductService::getSearchProductPay($search);
                 $pays       = PayService::getAllPay($search);
-                $warehouses = TypeWarehouse::all();
+                $warehouses = Warehouse::all();
                 $totalPrice = 0;
                 foreach($pays as $item){
                     $totalPrice += $item['price'] * $item['total'];
@@ -169,7 +169,7 @@ class PayController extends Controller
                 ];
                 $products   = ProductService::getSearchProductDept($search);
                 $depts      = PayService::getAllDept($search);
-                $warehouses = TypeWarehouse::all();
+                $warehouses = Warehouse::all();
                 $totalPrice = 0;
                 foreach($depts as $item){
                     $totalPrice += $item['price'] * $item['total'];

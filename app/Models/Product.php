@@ -2,16 +2,13 @@
 
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\TypeBrand;
+use App\Models\Brand;
 
 class Product extends Model{
     protected $table    = 'products';
 
     protected $fillable = [
         'name',
-        'total',
-        'price_import',
-        'price_export',
         'brand_id',
         'created_at',
         'updated_at'
@@ -19,6 +16,6 @@ class Product extends Model{
 
     public function brand()
     {
-        return $this->belongsTo(TypeBrand::class, 'brand_id', 'id');
+        return $this->belongsTo(Brand::class, 'brand_id', 'id');
     }
 }

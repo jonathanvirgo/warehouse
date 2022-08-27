@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\Debt;
 use App\Models\Pay;
+use App\Models\Import;
+use App\Models\Export;
 use App\Services\LogActivityService;
 
 class ProductService
@@ -64,6 +66,24 @@ class ProductService
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getSearchProductPay-catch', $e->getMessage());
+        }
+    }
+
+    public static function getSearchProductImport(){
+        try {
+            $products = Import::select("pro_id")->distinct()->with('product')->get();
+            return $products;
+        } catch (Exception $e) {
+            LogActivityService::addToLog('getSearchProductImport-catch', $e->getMessage());
+        }
+    }
+
+    public static function getSearchProductExport(){
+        try {
+            $products = Export::select("pro_id")->distinct()->with('product')->get();
+            return $products;
+        } catch (Exception $e) {
+            LogActivityService::addToLog('getSearchProductImport-catch', $e->getMessage());
         }
     }
 }

@@ -11,7 +11,7 @@ use App\Services\LogActivityService;
 use App\Models\Import;
 use App\Models\Debt;
 use App\Models\Product;
-use App\Models\TypeWarehouse;
+use App\Models\Warehouse;
 
 class ImportController extends Controller
 {
@@ -21,7 +21,7 @@ class ImportController extends Controller
             if(Auth::check()){
                 $products   = ProductService::getSearchProduct();
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
-                $warehouses = TypeWarehouse::all();
+                $warehouses = Warehouse::all();
                 return view('common.import',compact(
                     'products',
                     'today',
@@ -111,9 +111,9 @@ class ImportController extends Controller
                     ['id' => 'report_date|asc', 'name' => 'Ngày nhập tăng dần'],
                     ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
                 ];
-                $products       = ImportService::getSearchProduct();
+                $products       = ProductService::getSearchProductImport();
                 $imports        = ImportService::getAllImport($search);
-                $warehouses     = TypeWarehouse::all();
+                $warehouses     = Warehouse::all();
                 $totalPrice     = 0;
                 foreach($imports as $item){
                     $totalPrice += $item['price'] * $item['total'];

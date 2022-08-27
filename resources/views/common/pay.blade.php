@@ -115,8 +115,6 @@
         });
 
         $('#list_warehouse').on('select2:select', function (e) {
-            // let pro_id   = $('#list_product').val();
-            // getPrice(pro_id, e.params.data.id, 1);
             getInventory(e.params.data.id);
             $('#price').val('');
             $('input[id="total"]').val('');

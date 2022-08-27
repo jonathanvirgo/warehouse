@@ -3,9 +3,9 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
-use App\Models\TypeBrand;
+use App\Models\Brand;
 use App\Models\User;
-use App\Models\TypeWarehouse;
+use App\Models\Warehouse;
 
 class Import extends Model{
     protected $table    = 'imports';
@@ -34,11 +34,11 @@ class Import extends Model{
 
     public function brand()
     {
-        return $this->belongsTo(TypeBrand::class, 'brand_id', 'id');
+        return $this->belongsTo(Brand::class, 'brand_id', 'id');
     }
 
     public function warehouse()
     {
-        return $this->belongsTo(TypeWarehouse::class, 'warehouse_id', 'id');
+        return $this->belongsTo(Warehouse::class, 'warehouse_id', 'id');
     }
 }

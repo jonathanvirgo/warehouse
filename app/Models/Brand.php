@@ -3,6 +3,6 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
-class TypeBrand extends Model{
-    protected $table    = 'type_brand';
+class Brand extends Model{
+    protected $table    = 'brands';
 }
