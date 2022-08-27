@@ -106,8 +106,8 @@ function validateData(type){
         displayError("Bạn chưa nhập số lượng!");
         return false;
     }else{
-        if(type == 3){
-            let arrPro = arrPay.filter(s => s.pro_id == $('#list_product').val());
+        if(type == 3 || type == 2){
+            let arrPro = arrData.filter(s => s.pro_id == $('#list_product').val());
             if(arrPro.length > 0){
                 for(let item of arrPro){
                     totalArr += parseInt(item.total);
@@ -161,8 +161,8 @@ function addPay(){
     let note            = $('#note').val();
     let warehouse_id    = $('#list_warehouse').val();
     let warehouse_name  = $('#list_warehouse option:selected').text();
-    let dataPay = {"id": arrPay.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "note": note, "report_date": report_date, "id_debt": id_debt, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
-    arrPay.push(dataPay);
+    let dataPay = {"id": arrData.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "note": note, "report_date": report_date, "id_debt": id_debt, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
+    arrData.push(dataPay);
     let html = addPayHtml(dataPay);
     $(".table-responsive").find("tbody").append(html);
     totalArr = 0;
@@ -278,13 +278,13 @@ function deleteArr(index, type){
                             }
                             break;
                         case 3:
-                            for(let [i, item] of arrPay.entries()){
+                            for(let [i, item] of arrData.entries()){
                                 if(item.id == index){   
                                     $('#tr_'+index).remove();
-                                    arrPay.splice(i, 1);
+                                    arrData.splice(i, 1);
                                 }
                             }
-                            if(arrPay.length == 0){
+                            if(arrData.length == 0){
                                 $("#dataTable").hide();
                             }
                             break;
@@ -336,7 +336,7 @@ function save(type){
                             break;
                         case 3:
                             url = "/pay/store";
-                            data = {"arrPay" : JSON.stringify(arrPay)};
+                            data = {"arrPay" : JSON.stringify(arrData)};
                             break;
                         default: break;
                     }
@@ -424,9 +424,8 @@ function getPrice(pro_id, warehouse_id, is_import){
     loading.show();
     $.get('/product/price?pro_id='+ pro_id + '&warehouse_id=' + warehouse_id + '&is_import='+ is_import, function(response){
         loading.hide();
-        console.log("getPrice", response);
         if(response.status){
-            $('input[id="price"]').val(response.price);
+            $('#price').val(response.price == 0 ? '' : response.price);
         }else{
             displayError(response.message);
         }

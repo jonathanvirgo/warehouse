@@ -105,11 +105,11 @@
     <script>
         let id_debt     = 0;
         var arrProduct  = [];
-        let arrPay      = [];
+        let arrData      = [];
         let totalArr    = 0;
         $('#list_product').on('select2:select', function (e) {
             let price = $('#list_product option:selected').data('price');
-            $('input[id="price"]').val(price);
+            $('#price').val(price);
             $('input[id="total"]').attr({"max": $('#list_product option:selected').data('total')});
             id_debt = $('#list_product option:selected').data('id');
         });
@@ -118,7 +118,7 @@
             // let pro_id   = $('#list_product').val();
             // getPrice(pro_id, e.params.data.id, 1);
             getInventory(e.params.data.id);
-            $('input[id="price"]').val('');
+            $('#price').val('');
             $('input[id="total"]').val('');
         });
 
