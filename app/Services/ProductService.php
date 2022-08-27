@@ -12,7 +12,7 @@ class ProductService
 {
     public static function getAllProduct($search){
         try {
-            $query = Product::with('type');
+            $query = Product::with('brand');
             
             if((int)$search->pro_id !== 0){
                 $query->where("id", $search->pro_id);
@@ -41,7 +41,7 @@ class ProductService
 
     public static function getSearchProduct(){
         try {
-            $products = Product::with('type')->get();
+            $products = Product::with('brand')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getSearchProduct-catch', $e->getMessage());

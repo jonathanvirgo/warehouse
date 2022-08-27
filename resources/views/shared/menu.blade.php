@@ -17,6 +17,19 @@
         <li class="nav-item">
           <a class="nav-link {{ request()->path() === 'pay/index' ? 'active' : '' }}" href="{{ url('/pay/index') }}">Thanh toán</a>
         </li>
+
+        <li class="nav-item">
+          <a class="nav-link nav-hide {{ request()->path() === 'product/list' ? 'active' : '' }}" href="{{ url('/product/list') }}">Sản phẩm</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-hide {{ request()->path() === 'dept/list' ? 'active' : '' }}" href="{{ url('/dept/list') }}">Công nợ</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-hide {{ request()->path() === 'import/list' ? 'active' : '' }}" href="{{ url('/import/list') }}">Danh sách nhập hàng</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-hide {{ request()->path() === 'pay/list' ? 'active' : '' }}" href="{{ url('/pay/list') }}">Danh sách thanh toán</a>
+        </li>
         @endif
       </ul>
       <div class="nav-item dropdown">

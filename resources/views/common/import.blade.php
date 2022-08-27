@@ -16,7 +16,7 @@
             <h1 class="h2">Nhập kho</h1>
         </div>
         <div class="row">
-            <div class="col-12 col-sm-6 mb-2">
+            <div class="col-12 col-sm-6 col-md-6 mb-2">
                 <div class="form-group">
                     <label for="list_product" class="mb-1">Sản phẩm</label>
                     <select id="list_product" class="form-control select2">
@@ -29,10 +29,22 @@
                     </select>
                 </div>
             </div>
-            <div class="col-12 col-sm-6 mb-2">
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
                 <div class="form-group">
                     <label for="price" class="mb-1">Giá</label>
                     <input id="price" min="1000" type="number" class="form-control" placeholder="Giá nhập">
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+                <div class="form-group">
+                    <label for="list_warehouse" class="mb-1">Loại kho</label>
+                    <select id="list_warehouse" class="form-control select2">
+                        @if (!empty($warehouses))
+                            @foreach ($warehouses as $item)
+                                <option value="{{ $item['id'] }}" >{{ $item["name"] }}</option>
+                            @endforeach
+                        @endif
+                    </select>
                 </div>
             </div>
             <div class="col-12 col-sm-6 mb-2">

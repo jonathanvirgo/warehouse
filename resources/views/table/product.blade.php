@@ -52,7 +52,7 @@
             <th scope="col">Sản phẩm</th>
             <th scope="col">Số lượng</th>
             <th scope="col">Giá nhập</th>
-            <th scope="col">Loại</th>
+            <th scope="col">Hãng</th>
           </tr>
         </thead>
         <tbody>
@@ -62,7 +62,7 @@
               <td>{{$item['name']}}</td>
               <td>{{$item['total']}}</td>
               <td>{{number_format($item['price_import'])}}</td>
-              <td>{{$item->type->name}}</td>
+              <td>{{$item->brand->name}}</td>
             </tr>
             @endforeach
           

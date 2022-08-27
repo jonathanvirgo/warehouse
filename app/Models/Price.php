@@ -3,42 +3,31 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
-use App\Models\TypeBrand;
-use App\Models\User;
 use App\Models\TypeWarehouse;
+use App\Models\TypeExport;
 
-class Import extends Model{
-    protected $table    = 'imports';
+class Price extends Model{
+    protected $table    = 'price';
     protected $fillable = [
         'pro_id',
-        'total',
         'price',
-        'report_date',
-        'note',
-        'created_by',
-        'brand_id',
+        'type_export_id',
         'warehouse_id',
+        'is_import',
         'created_at',
         'updated_at'
     ];
-    
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'created_by', 'id');
-    }
 
     public function product()
     {
         return $this->belongsTo(Product::class, 'pro_id', 'id');
     }
-
-    public function brand()
-    {
-        return $this->belongsTo(TypeBrand::class, 'brand_id', 'id');
-    }
-
     public function warehouse()
     {
         return $this->belongsTo(TypeWarehouse::class, 'warehouse_id', 'id');
+    }
+    public function typeExport()
+    {
+        return $this->belongsTo(TypeExport::class, 'type_export_id', 'id');
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\TypeProduct;
+use App\Models\TypeBrand;
 
 class Product extends Model{
     protected $table    = 'products';
@@ -12,13 +12,13 @@ class Product extends Model{
         'total',
         'price_import',
         'price_export',
-        'type_id',
+        'brand_id',
         'created_at',
         'updated_at'
     ];
 
-    public function type()
+    public function brand()
     {
-        return $this->belongsTo(TypeProduct::class, 'type_id', 'id');
+        return $this->belongsTo(TypeBrand::class, 'brand_id', 'id');
     }
 }

@@ -144,7 +144,8 @@ function addImport(){
     let paied           = $('#confirm_pay').is(":checked");
     let report_date     = $('#report_date').val();
     let note            = $('#note').val();
-    let dataImport = {"id": arrImport.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "paied": paied, "note": note, "report_date": report_date};
+    let warehouse_id    = $('#list_warehouse').val();
+    let dataImport = {"id": arrImport.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "paied": paied, "note": note, "report_date": report_date, "warehouse_id":warehouse_id};
     arrImport.push(dataImport);
     let html = addImportHtml(dataImport);
     $(".table-responsive").find("tbody").append(html);

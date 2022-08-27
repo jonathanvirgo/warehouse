@@ -11,6 +11,7 @@ use App\Services\LogActivityService;
 use App\Models\Import;
 use App\Models\Debt;
 use App\Models\Product;
+use App\Models\TypeWarehouse;
 
 class ImportController extends Controller
 {
@@ -20,9 +21,11 @@ class ImportController extends Controller
             if(Auth::check()){
                 $products   = ProductService::getSearchProduct();
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
+                $warehouses = TypeWarehouse::all();
                 return view('common.import',compact(
                     'products',
-                    'today'
+                    'today',
+                    'warehouses'
                 ));
             }else{
                 $message = 'Liên kết không tồn tại';
@@ -49,14 +52,10 @@ class ImportController extends Controller
                             "price"         => (int)$item->price,
                             "report_date"   => date('Y-m-d', strtotime($item->report_date)),
                             "note"          => $item->note,
-                            "created_by"    => $user->id
+                            "created_by"    => $user->id,
+                            "warehouse_id"  => $item->warehouse_id
                         ];
                         Import::create($inputs);
-                        $product = Product::find($item->pro_id);
-                        if($product){
-                            $total = $product->total + $inputs['total'];
-                            $product->update(["total" => $total]);
-                        }
                         if($item->paied == false){
                             $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price)->first();
                             if($dept){

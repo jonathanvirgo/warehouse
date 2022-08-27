@@ -50,12 +50,6 @@ class PayController extends Controller
                             "note"          => $item->note,
                             "created_by"    => $user->id
                         ];
-                        $product = Product::find($item->pro_id);
-                        if($product){
-                            $total = $product->total - $inputs['total'];
-                            $product->update(["total" => $total]);
-                            $inputs["type_id"] = $product->type_id;
-                        }
                         if($item->id_debt > 0){
                             $dept = Debt::find($item->id_debt);
                             if($dept){
