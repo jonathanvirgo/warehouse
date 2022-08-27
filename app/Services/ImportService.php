@@ -11,6 +11,10 @@ class ImportService
     public static function getAllImport($search){
         try {
             $query = Import::with('product');
+            if($search->warehouse_id){
+                $query->where("warehouse_id", $search->warehouse_id);
+            }
+
             if ($search->reportdate) {
                 $time = explode(' - ', trim($search->reportdate), 2);
                 if ($time[0] == $time[1]) {

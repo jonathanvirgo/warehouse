@@ -38,7 +38,20 @@
               </select>
           </div>
       </div>
-      <div class="col-12 col-sm-6 col-md-6 col-lg-4">
+      <div class="col-12 col-sm-6 col-md-6 col-lg-2">
+        <div class="form-group">
+          <label class="mb-1"><i class="fa fa-university" aria-hidden="true"></i> Kho</label>
+          <select id="list_warehouse" class="form-control select2" name="warehouse_id">
+          @if (!empty($warehouses))
+              @foreach ($warehouses as $item)
+                <?php $selected_warehouse = $item['id'] == $search->warehouse_id ? 'selected="selected"' : ''; ?>
+                  <option {{$selected_warehouse}} value="{{ $item['id'] }}" >{{ $item["name"] }}</option>
+              @endforeach
+          @endif
+          </select>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-md-6 col-lg-2">
         <div class="form-group">
           <label class="mb-1"><i class="fa fa-sort" aria-hidden="true"></i> Sắp xếp</label>
           <select id="order_by" class="form-control select2" name="order_by">
@@ -60,8 +73,8 @@
           <th scope="col">Số lượng</th>
           <th scope="col">Đơn giá</th>
           <th scope="col">Tổng giá</th>
-          <th scope="col">Ngày thanh toán</th>
           <th scope="col">Ghi chú</th>
+          <th scope="col">Ngày thanh toán</th>
         </tr>
       </thead>
       <tbody>
@@ -71,13 +84,13 @@
             <td>{{$item['total']}}</td>
             <td>{{number_format($item['price'])}}</td>
             <td>{{number_format($item['price'] * $item['total'])}}</td>
-            <td>{{date('d/m/Y', strtotime($item->report_date))}}</td>
             <td>{{$item['note']}}</td>
+            <td>{{date('d/m/Y', strtotime($item->report_date))}}</td>
           </tr>
           @endforeach
           <tr>
             <th colspan="3">Tổng số</th>
-            <th colspan="2">{{number_format($totalPrice)}}</th>
+            <th colspan="3">{{number_format($totalPrice)}}</th>
           </tr>
       </tbody>
     </table>
@@ -123,6 +136,10 @@
     });
 
     $('#order_by').on('select2:select', function (e) {
+      $("#search_form").submit();
+    });
+
+    $('#list_warehouse').on('select2:select', function (e) {
       $("#search_form").submit();
     });
   </script>

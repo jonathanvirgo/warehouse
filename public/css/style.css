@@ -59,6 +59,15 @@
     display: none;
 }
 
+#form_login ul li {
+    list-style: none;
+    color: red;
+}
+
+#form_login ul{
+    padding: 0;
+}
+
 @media only screen and (max-width: 1440px){
 
 }

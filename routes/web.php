@@ -25,16 +25,24 @@ Route::get('/', function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/', function () {return view('dashboard');});
     Route::get('dashboard', 'DashboardController@index')->name('dashboard');
-    Route::get('import/index', 'ImportController@index');
+
     Route::get('export/index', 'ExportController@index');
-    Route::get('pay/index', 'PayController@index');
+    Route::post('export/store', 'ExportController@store');
+    Route::get('export/list', 'ExportController@list');
+
+    Route::get('import/index', 'ImportController@index');
     Route::post('import/store', 'ImportController@store');
     Route::get('import/list', 'ImportController@list');
+
+    Route::get('pay/index', 'PayController@index');
     Route::post('pay/store', 'PayController@store');
     Route::get('pay/list', 'PayController@list');
-    Route::get('export/list', 'ExportController@list');
+
     Route::get('dept/list', 'PayController@deptList');
+
     Route::get('product/list', 'ProductController@list');
+    Route::get('product/price', 'ProductController@getPrice');
+    Route::get('product/inventory', 'ProductController@getInventory');
 });
 
 Route::group(['prefix' => 'admin'], function () {

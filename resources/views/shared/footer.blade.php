@@ -1,5 +1,5 @@
 <div class="container">
-  <div id="loading-page"><img src="/images/preloader.gif" title="Đang xử lý dữ liệu..." />Đang xử lý dữ liệu...</div>
+  <div id="loading-page"><img src="/images/preloader.gif"/></div>
   <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
     <p class="col-12 col-md-4 mb-0 text-muted">© 2021 Company, Inc</p>
 

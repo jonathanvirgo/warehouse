@@ -11,9 +11,9 @@
         <li class="nav-item">
           <a class="nav-link {{ request()->path() === 'import/index' ? 'active' : '' }}" href="{{ url('/import/index') }}">Nhập kho</a>
         </li>
-        <!-- <li class="nav-item">
-          <a class="nav-link" href="{{ url('/export/index') }}">Xuất kho</a>
-        </li> -->
+        <li class="nav-item">
+          <a class="nav-link {{ request()->path() === 'export/index' ? 'active' : '' }}" href="{{ url('/export/index') }}">Xuất kho</a>
+        </li>
         <li class="nav-item">
           <a class="nav-link {{ request()->path() === 'pay/index' ? 'active' : '' }}" href="{{ url('/pay/index') }}">Thanh toán</a>
         </li>

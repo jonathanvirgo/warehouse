@@ -15,6 +15,7 @@ class Pay extends Model{
         'report_date',
         'note',
         'created_by',
+        'warehouse_id',
         'brand_id',
         'created_at',
         'updated_at'
@@ -33,5 +34,10 @@ class Pay extends Model{
     public function brand()
     {
         return $this->belongsTo(TypeBrand::class, 'brand_id', 'id');
+    }
+    
+    public function warehouse()
+    {
+        return $this->belongsTo(TypeWarehouse::class, 'warehouse_id', 'id');
     }
 }

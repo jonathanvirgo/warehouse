@@ -7,12 +7,29 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Services\ImportService;
 use App\Services\LogActivityService;
+use App\Services\ProductService;
+use App\Models\TypeWarehouse;
 
 class ExportController extends Controller
 {
     public function index(Request $request){
         try {
-            return view('common.export');
+            if(Auth::check()){
+                $search         = (object)[
+                    'warehouse_id'  => $request->get('warehouse_id', 1)
+                ];
+                $products   = ProductService::getAllDebt($search);
+                $today      = date('d-m-Y', strtotime(Carbon::today()));
+                $warehouses = TypeWarehouse::all();
+                return view('common.export',compact(
+                    'products',
+                    'today',
+                    'warehouses'
+                ));
+            }else{
+                $message = 'Liên kết không tồn tại';
+                return view('404', compact('message'));
+            }
         } catch (Exception $e) {
             LogActivityService::addToLog('indexExport-catch', $e->getMessage());
             return $e->getMessage();

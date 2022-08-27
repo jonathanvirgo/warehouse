@@ -10,6 +10,7 @@ use App\Services\PayService;
 use App\Services\LogActivityService;
 use App\Models\Pay;
 use App\Models\Debt;
+use App\Models\TypeWarehouse;
 use App\Models\Product;
 
 class PayController extends Controller
@@ -17,11 +18,16 @@ class PayController extends Controller
     public function index(Request $request){
         try {
             if(Auth::check()){
-                $products = ProductService::getAllDebt();
+                $search         = (object)[
+                    'warehouse_id'  => $request->get('warehouse_id', 1)
+                ];
+                $products = ProductService::getAllDebt($search);
+                $warehouses = TypeWarehouse::all();
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
                 return view('common.pay',compact(
                     'products',
-                    'today'
+                    'today',
+                    'warehouses'
                 ));
             }else{
                 $message = 'Liên kết không tồn tại';
@@ -29,7 +35,8 @@ class PayController extends Controller
             }
         } catch (Exception $e) {
             LogActivityService::addToLog('indexPay-catch', $e->getMessage());
-            return $e->getMessage();
+            $message = $e->getMessage();
+            return view('404', compact('message'));
         }
     }
 
@@ -48,6 +55,7 @@ class PayController extends Controller
                             "price"         => (int)$item->price,
                             "report_date"   => date('Y-m-d', strtotime($item->report_date)),
                             "note"          => $item->note,
+                            "warehouse_id"  => $item->warehouse_id,
                             "created_by"    => $user->id
                         ];
                         if($item->id_debt > 0){
@@ -86,6 +94,7 @@ class PayController extends Controller
                     'reportdate'  => $request->get('reportdate', $fromdate.' - '.$todate),
                     'order_by'    => $request->get('order_by','id|desc'),
                     'pro_id'      => $request->get('pro_id', 0),
+                    'warehouse_id'  => $request->get('warehouse_id', 1)
                 ];
                 if ($search->reportdate) {
                     $time     = explode(' - ', trim($search->reportdate), 2);
@@ -103,8 +112,9 @@ class PayController extends Controller
                     ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
                 ];
 
-                $products   = PayService::getSearchProductPay();
+                $products   = ProductService::getSearchProductPay($search);
                 $pays       = PayService::getAllPay($search);
+                $warehouses = TypeWarehouse::all();
                 $totalPrice = 0;
                 foreach($pays as $item){
                     $totalPrice += $item['price'] * $item['total'];
@@ -116,7 +126,8 @@ class PayController extends Controller
                     'search',
                     'orders_by',
                     'products',
-                    'totalPrice'
+                    'totalPrice',
+                    'warehouses'
                 ));
             }else{
                 $message = 'Liên kết không tồn tại';
@@ -124,7 +135,8 @@ class PayController extends Controller
             }
         } catch (Exception $e) {
             LogActivityService::addToLog('listPay-catch', $e->getMessage());
-            return $e->getMessage();
+            $message = $e->getMessage();
+            return view('404', compact('message'));
         }
     }
 
@@ -136,8 +148,9 @@ class PayController extends Controller
                 // $todate         = Carbon::now()->addDays(30)->format('d-m-Y');
                 $search         = (object)[
                     // 'reportdate'  => $request->get('reportdate', $fromdate.' - '.$todate),
-                    'order_by'    => $request->get('order_by','id|desc'),
-                    'pro_id'      => $request->get('pro_id', 0)
+                    'order_by'      => $request->get('order_by','id|desc'),
+                    'pro_id'        => $request->get('pro_id', 0),
+                    'warehouse_id'  => $request->get('warehouse_id', 1)
                 ];
                 // if ($search->reportdate) {
                 //     $time     = explode(' - ', trim($search->reportdate), 2);
@@ -154,8 +167,9 @@ class PayController extends Controller
                     // ['id' => 'report_date|asc', 'name' => 'Ngày nhập tăng dần'],
                     // ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
                 ];
-                $products   = PayService::getSearchProductDept();
+                $products   = ProductService::getSearchProductDept($search);
                 $depts      = PayService::getAllDept($search);
+                $warehouses = TypeWarehouse::all();
                 $totalPrice = 0;
                 foreach($depts as $item){
                     $totalPrice += $item['price'] * $item['total'];
@@ -165,7 +179,8 @@ class PayController extends Controller
                     'search',
                     'products',
                     'orders_by',
-                    'totalPrice'
+                    'totalPrice',
+                    'warehouses'
                 ));
             }else{
                 $message = 'Liên kết không tồn tại';
@@ -173,7 +188,8 @@ class PayController extends Controller
             }
         } catch (Exception $e) {
             LogActivityService::addToLog('listDept-catch', $e->getMessage());
-            return $e->getMessage();
+            $message = $e->getMessage();
+            return view('404', compact('message'));
         }
     }
 }

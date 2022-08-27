@@ -33,7 +33,8 @@ class ImportController extends Controller
             }
         } catch (Exception $e) {
             LogActivityService::addToLog('indexImport-catch', $e->getMessage());
-            return $e->getMessage();
+            $message = $e->getMessage();
+            return view('404', compact('message'));
         }
     }
 
@@ -57,7 +58,7 @@ class ImportController extends Controller
                         ];
                         Import::create($inputs);
                         if($item->paied == false){
-                            $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price)->first();
+                            $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price)->where("warehouse_id", $item->warehouse_id)->first();
                             if($dept){
                                 $total = $dept->total + $inputs['total'];
                                 $dept->update(["total" => $total, "type_id" => (int)$product->type_id]);
@@ -93,6 +94,7 @@ class ImportController extends Controller
                     'reportdate'  => $request->get('reportdate', $fromdate.' - '.$todate),
                     'order_by'    => $request->get('order_by','id|desc'),
                     'pro_id'      => $request->get('pro_id', 0),
+                    'warehouse_id'  => $request->get('warehouse_id', 1)
                 ];
                 if ($search->reportdate) {
                     $time     = explode(' - ', trim($search->reportdate), 2);
@@ -111,7 +113,8 @@ class ImportController extends Controller
                 ];
                 $products       = ImportService::getSearchProduct();
                 $imports        = ImportService::getAllImport($search);
-                $totalPrice = 0;
+                $warehouses     = TypeWarehouse::all();
+                $totalPrice     = 0;
                 foreach($imports as $item){
                     $totalPrice += $item['price'] * $item['total'];
                 }
@@ -122,7 +125,8 @@ class ImportController extends Controller
                     'search',
                     'orders_by',
                     'products',
-                    'totalPrice'
+                    'totalPrice',
+                    'warehouses'
                 ));
             }else{
                 $message = 'Liên kết không tồn tại';
@@ -130,7 +134,8 @@ class ImportController extends Controller
             }
         } catch (Exception $e) {
             LogActivityService::addToLog('listImport-catch', $e->getMessage());
-            return $e->getMessage();
+            $message = $e->getMessage();
+            return view('404', compact('message'));
         }
     }
 }

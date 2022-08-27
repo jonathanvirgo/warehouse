@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use App\Services\LogActivityService;
 use App\Services\ProductService;
+use App\Models\Price;
 
 class ProductController extends Controller
 {
@@ -40,7 +41,56 @@ class ProductController extends Controller
             }
         } catch (Exception $e) {
             LogActivityService::addToLog('listProduct-catch', $e->getMessage());
-            return $e->getMessage();
+            $message = $e->getMessage();
+            return view('404', compact('message'));
         }
+    }
+
+    public function getPrice(Request $request){
+        $user       = Auth::user();
+        $result = array('status' => true, 'message' => 'Success', 'price' => 0);
+        try {
+            if(Auth::check()){
+                $inputs = [
+                    "pro_id"        => (int)$request->pro_id,
+                    "warehouse_id"  => (int)$request->warehouse_id,
+                    "is_import"     => (int)$request->is_import
+                ];
+                $price = Price::select("price")->where("pro_id", $inputs['pro_id'])->where("warehouse_id", $inputs['warehouse_id'])->where('is_import', $inputs['is_import'])->first();
+                $result['price'] = isset($price->price) ? $price->price : 0;
+            }else{
+                $result['status'] = false;
+                $result['message'] = 'Bạn chưa đăng nhập!';
+            }
+            return response()->json($result, 200);
+        } catch (Exception $e) {
+            LogActivityService::addToLog('getPrice-catch', $e->getMessage());
+            $result['status'] = false;
+            $result['message'] = $e->getMessage();
+            return response()->json($result, 200);
+        } 
+    }
+
+    public function getInventory(Request $request){
+        $user       = Auth::user();
+        $result = array('status' => true, 'message' => 'Success');
+        try {
+            if(Auth::check()){
+                $inputs = (object)[
+                    "warehouse_id"  => (int)$request->warehouse_id
+                ];
+                $data = ProductService::getAllDebt($inputs);
+                $result['data'] = $data;
+            }else{
+                $result['status'] = false;
+                $result['message'] = 'Bạn chưa đăng nhập!';
+            }
+            return response()->json($result, 200);
+        } catch (Exception $e) {
+            LogActivityService::addToLog('getInventory-catch', $e->getMessage());
+            $result['status'] = false;
+            $result['message'] = $e->getMessage();
+            return response()->json($result, 200);
+        } 
     }
 }

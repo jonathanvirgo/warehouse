@@ -22,32 +22,38 @@ class LoginController extends Controller
     }
 
     public function login(Request $request){
-        $rules = [
-            'email'                 => 'required',
-            'password'              => 'required'
-        ];       
-        $messages = [
-            'email.required'                 => 'Tên đăng nhập được yêu cầu!',
-            'password.required'              => 'Mật khẩu được yêu cầu!'
-        ];
-
-        $validator  = \Validator::make($request->all(), $rules, $messages);
-        if ($validator->fails()) {
-            return redirect("login")->withErrors($validator)->withInput();
-        }
-
-        // Nếu dữ liệu hợp lệ sẽ kiểm tra trong csdl
-        $email    = $request->input('email');
-        $password = $request->input('password');
-
-         if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            if(Auth::attempt(['email' => $email, 'password' => $password])) {
-                // Kiểm tra đúng email và mật khẩu sẽ chuyển trang
-                return redirect('product/list');
-            } else {
-                // Kiểm tra không đúng sẽ hiển thị thông báo lỗi
-                return redirect('login')->withErrors(['Email hoặc mật khẩu không đúng!'])->withInput();
+        try {
+            $rules = [
+                'email'                 => 'required',
+                'password'              => 'required'
+            ];       
+            $messages = [
+                'email.required'                 => 'Tên đăng nhập được yêu cầu!',
+                'password.required'              => 'Mật khẩu được yêu cầu!'
+            ];
+    
+            $validator  = \Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect("login")->withErrors($validator)->withInput();
             }
+    
+            // Nếu dữ liệu hợp lệ sẽ kiểm tra trong csdl
+            $email    = $request->input('email');
+            $password = $request->input('password');
+    
+             if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                if(Auth::attempt(['email' => $email, 'password' => $password])) {
+                    // Kiểm tra đúng email và mật khẩu sẽ chuyển trang
+                    return redirect('product/list');
+                } else {
+                    // Kiểm tra không đúng sẽ hiển thị thông báo lỗi
+                    return redirect('login')->withErrors(['Email hoặc mật khẩu không đúng!'])->withInput();
+                }
+            }
+        } catch (Exception $e) {
+            LogActivityService::addToLog('login-catch', $e->getMessage());
+            $message = $e->getMessage();
+            return view('404', compact('message'));
         }
     }
 }

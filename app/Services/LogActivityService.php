@@ -11,7 +11,6 @@ class LogActivityService
         $log['message']     = $message;
         $log['url']         = Request::url();
         $log['method']      = Request::method();
-        $log['ip']          = Request::ip();
         $log['agent']       = Request::header('user-agent');
         $log['user_id']     = auth()->check() ? auth()->user()->id : 1;
         $log['form_data']   = json_encode(Request::all());

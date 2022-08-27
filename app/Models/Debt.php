@@ -4,6 +4,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product;
 use App\Models\TypeBrand;
+use App\Models\TypeWarehouse;
 
 class Debt extends Model{
     protected $table    = 'debts';
@@ -14,6 +15,7 @@ class Debt extends Model{
         'report_date',
         'created_by',
         'brand_id',
+        'warehouse_id',
         'created_at',
         'updated_at'
     ];
@@ -31,5 +33,10 @@ class Debt extends Model{
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(TypeWarehouse::class, 'warehouse_id', 'id');
     }
 }

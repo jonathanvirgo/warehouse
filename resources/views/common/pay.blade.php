@@ -16,7 +16,7 @@
             <h1 class="h2">Thanh toán</h1>
         </div>
         <div class="row">
-            <div class="col-12 col-sm-6 mb-2">
+            <div class="col-12 col-sm-6 col-md-6 mb-2">
                 <div class="form-group">
                     <label for="list_product" class="mb-1">Sản phẩm</label>
                     <select id="list_product" class="form-control select2">
@@ -29,12 +29,27 @@
                     </select>
                 </div>
             </div>
-            <div class="col-12 col-sm-6 mb-2">
+
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
                 <div class="form-group">
                     <label for="price" class="mb-1">Giá</label>
                     <input id="price" type="number" class="form-control" placeholder="Giá nhập">
                 </div>
             </div>
+
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+                <div class="form-group">
+                    <label for="list_warehouse" class="mb-1">Loại kho</label>
+                    <select id="list_warehouse" class="form-control select2">
+                        @if (!empty($warehouses))
+                            @foreach ($warehouses as $item)
+                                <option value="{{ $item['id'] }}" >{{ $item["name"] }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+            </div>
+            
             <div class="col-12 col-sm-6 mb-2">
                 <div class="form-group">
                     <label for="total" class="mb-1">Số lượng</label>
@@ -64,10 +79,11 @@
                 <thead>
                     <tr>
                         <th scope="col">Sản phẩm</th>
-                        <th scope="col">Số lượng</th>
                         <th scope="col">Giá</th>
-                        <th scope="col">Ngày nhập</th>
+                        <th scope="col">Số lượng</th>
+                        <th scope="col">Kho</th>
                         <th scope="col">Ghi chú</th>
+                        <th scope="col">Ngày thanh toán</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
@@ -87,14 +103,27 @@
 
 @section('pageJs')
     <script>
-        let id_debt = 0;
-        let arrPay = [];
-        let totalArr = 0;
+        let id_debt     = 0;
+        var arrProduct  = [];
+        let arrPay      = [];
+        let totalArr    = 0;
         $('#list_product').on('select2:select', function (e) {
             let price = $('#list_product option:selected').data('price');
             $('input[id="price"]').val(price);
             $('input[id="total"]').attr({"max": $('#list_product option:selected').data('total')});
             id_debt = $('#list_product option:selected').data('id');
+        });
+
+        $('#list_warehouse').on('select2:select', function (e) {
+            // let pro_id   = $('#list_product').val();
+            // getPrice(pro_id, e.params.data.id, 1);
+            getInventory(e.params.data.id);
+            $('input[id="price"]').val('');
+            $('input[id="total"]').val('');
+        });
+
+        $(document).ready(function(){
+            arrProduct = @json($products);
         });
     </script>
 @stop

@@ -23,7 +23,7 @@
                         <option value="0">Chọn sản phẩm</option>
                         @if (!empty($products))
                             @foreach ($products as $item)
-                                <option value="{{ $item['id'] }}" data-price_import="{{$item['price_import']}}" data-price_export="{{$item['price_export']}}">{{ $item["name"] }}</option>
+                                <option value="{{ $item['id'] }}">{{ $item["name"] }}</option>
                             @endforeach
                         @endif
                     </select>
@@ -83,6 +83,7 @@
                         <th scope="col">Giá</th>
                         <th scope="col">Số lượng</th>
                         <th scope="col">Thanh toán</th>
+                        <th scope="col">Kho</th>
                         <th scope="col">Ngày nhập</th>
                         <th scope="col">Ghi chú</th>
                         <th scope="col"></th>
@@ -106,9 +107,14 @@
 <script>
     let arrImport = [];
     let totalArr = 0;
-    $('#list_product').on('select2:select', function () {
-        let price_import = $('#list_product option:selected').data('price_import');
-        $('input[id="price"]').val(price_import);
+    $('#list_product').on('select2:select', function (e) {
+        let warehouse   = $('#list_warehouse').val();
+        getPrice(e.params.data.id, warehouse, 1);
+    });
+
+    $('#list_warehouse').on('select2:select', function (e) {
+        let pro_id   = $('#list_product').val();
+        getPrice(pro_id, e.params.data.id, 1);
     });
 </script>
 @stop

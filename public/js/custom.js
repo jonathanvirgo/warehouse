@@ -110,7 +110,7 @@ function validateData(type){
             let arrPro = arrPay.filter(s => s.pro_id == $('#list_product').val());
             if(arrPro.length > 0){
                 for(let item of arrPro){
-                    totalArr += item.total;
+                    totalArr += parseInt(item.total);
                 }
             }
             let max = parseInt($('input[id="total"]').attr("max"));
@@ -145,7 +145,8 @@ function addImport(){
     let report_date     = $('#report_date').val();
     let note            = $('#note').val();
     let warehouse_id    = $('#list_warehouse').val();
-    let dataImport = {"id": arrImport.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "paied": paied, "note": note, "report_date": report_date, "warehouse_id":warehouse_id};
+    let warehouse_name  = $('#list_warehouse option:selected').text();
+    let dataImport = {"id": arrImport.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "paied": paied, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
     arrImport.push(dataImport);
     let html = addImportHtml(dataImport);
     $(".table-responsive").find("tbody").append(html);
@@ -158,7 +159,9 @@ function addPay(){
     let total           = $('#total').val();
     let report_date     = $('#report_date').val();
     let note            = $('#note').val();
-    let dataPay = {"id": arrPay.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "note": note, "report_date": report_date, "id_debt": id_debt};
+    let warehouse_id    = $('#list_warehouse').val();
+    let warehouse_name  = $('#list_warehouse option:selected').text();
+    let dataPay = {"id": arrPay.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "note": note, "report_date": report_date, "id_debt": id_debt, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
     arrPay.push(dataPay);
     let html = addPayHtml(dataPay);
     $(".table-responsive").find("tbody").append(html);
@@ -166,6 +169,51 @@ function addPay(){
 }
 
 function addImportHtml(dataImport){
+    let div   = document.createElement("tr");
+    let td1  = document.createElement("td");
+    let td2  = document.createElement("td");
+    let td3  = document.createElement("td");
+    let td4  = document.createElement("td");
+    let td5  = document.createElement("td");
+    let td6  = document.createElement("td");
+    let td7  = document.createElement("td");
+    let td8  = document.createElement("td");
+
+    let span1 = document.createElement("span");
+    let span2 = document.createElement("span");
+    $(span1).addClass('material-icons');
+    $(span2).addClass('material-icons');
+    span1.dataset.id = dataImport.id;
+    span2.dataset.id = dataImport.id;
+    $(span1).text("close");
+    $(span1).css({"position":'relative', "left":"15px"});
+    $(span2).text("edit");
+    $(span1).click(function(){
+        let id = $(this).data('id');
+        deleteArr(id, 1);
+    });
+    td8.append(span2);
+    td8.append(span1);
+    
+    $(td1).text(dataImport.pro_name);
+    $(td2).text(dataImport.price);
+    $(td3).text(dataImport.total);
+    $(td4).text(dataImport.paied ? 'Đã thanh toán' : 'Công nợ');
+    $(td5).text(dataImport.warehouse_name);
+    $(td6).text(dataImport.note);
+    $(td7).text(dataImport.report_date);
+    $(div).attr('id', 'tr_'+dataImport.id);
+    div.append(td1);
+    div.append(td2);
+    div.append(td3);
+    div.append(td4);
+    div.append(td5);
+    div.append(td6);
+    div.append(td7);
+    return div;
+}
+
+function addPayHtml(dataImport){
     let div   = document.createElement("tr");
     let td1  = document.createElement("td");
     let td2  = document.createElement("td");
@@ -186,59 +234,18 @@ function addImportHtml(dataImport){
     $(span2).text("edit");
     $(span1).click(function(){
         let id = $(this).data('id');
-        deleteArr(id, 1);
+        deleteArr(id, 3);
     });
     td7.append(span2);
     td7.append(span1);
     
-    $(td1).text(dataImport.pro_name);
-    $(td2).text(dataImport.price);
-    $(td3).text(dataImport.total);
-    $(td4).text(dataImport.paied ? 'Đã thanh toán' : 'Công nợ');
-    $(td5).text(dataImport.report_date);
-    $(td6).text(dataImport.note);
-    $(div).attr('id', 'tr_'+dataImport.id);
-    div.append(td1);
-    div.append(td2);
-    div.append(td3);
-    div.append(td4);
-    div.append(td5);
-    div.append(td6);
-    div.append(td7);
-    return div;
-}
-
-function addPayHtml(dataImport){
-    let div   = document.createElement("tr");
-    let td1  = document.createElement("td");
-    let td2  = document.createElement("td");
-    let td3  = document.createElement("td");
-    let td4  = document.createElement("td");
-    let td5  = document.createElement("td");
-    let td6  = document.createElement("td");
-
-    let span1 = document.createElement("span");
-    let span2 = document.createElement("span");
-    $(span1).addClass('material-icons');
-    $(span2).addClass('material-icons');
-    span1.dataset.id = dataImport.id;
-    span2.dataset.id = dataImport.id;
-    $(span1).text("close");
-    $(span1).css({"position":'relative', "left":"15px"});
-    $(span2).text("edit");
-    $(span1).click(function(){
-        let id = $(this).data('id');
-        deleteArr(id, 3);
-    });
-    td6.append(span2);
-    td6.append(span1);
-    
 
     $(td1).text(dataImport.pro_name);
     $(td2).text(dataImport.price);
     $(td3).text(dataImport.total);
-    $(td4).text(dataImport.report_date);
+    $(td4).text(dataImport.warehouse_name);
     $(td5).text(dataImport.note);
+    $(td6).text(dataImport.report_date);
     $(div).attr('id', 'tr_'+dataImport.id);
     div.append(td1);
     div.append(td2);
@@ -408,6 +415,53 @@ function deleteTable(id, type){
                 },
                 keys: ['esc']
             }
+        }
+    });
+}
+
+function getPrice(pro_id, warehouse_id, is_import){
+    let loading     = $("#loading-page");
+    loading.show();
+    $.get('/product/price?pro_id='+ pro_id + '&warehouse_id=' + warehouse_id + '&is_import='+ is_import, function(response){
+        loading.hide();
+        console.log("getPrice", response);
+        if(response.status){
+            $('input[id="price"]').val(response.price);
+        }else{
+            displayError(response.message);
+        }
+    });
+}
+
+function getInventory(warehouse_id){
+    let loading     = $("#loading-page");
+    loading.show();
+    $.get('/product/inventory?warehouse_id=' + warehouse_id, function(response){
+        loading.hide();
+        console.log("getPrice", response);
+        if(response.status){
+            if(arrProduct.length > 0){
+                for(let item of arrProduct){
+                    $("#list_product option[value='"+item.id+ "']").remove();
+                }
+            }
+            
+            $("#list_product").empty();
+            arrProduct = response.data ? response.data : [];
+
+            for(let item2 of arrProduct){
+                let newProduct = new Option(item2.product.name + " | " + item2.price + " | " + item2.total, item2.pro_id, false, false);
+                newProduct.dataset.id       = item2.id;
+                newProduct.dataset.total    = item2.total;
+                newProduct.dataset.price    = item2.price;
+                // Append it to the select
+                $('#list_product').append(newProduct);
+            }
+            let newProduct = new Option("Chọn sản phẩm", 0, false, false);
+            $('#list_product').append(newProduct);
+            $('#list_product').val(0).trigger('change');
+        }else{
+            displayError(response.message);
         }
     });
 }

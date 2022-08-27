@@ -22,6 +22,10 @@ class PayService
                 }
             }
 
+            if($search->warehouse_id){
+                $query->where("warehouse_id", $search->warehouse_id);
+            }
+
             if((int)$search->pro_id !== 0){
                 $query->where("pro_id", $search->pro_id);
             }
@@ -50,6 +54,10 @@ class PayService
             //     }
             // }
 
+            if($search->warehouse_id){
+                $query->where("warehouse_id", $search->warehouse_id);
+            }
+
             if((int)$search->pro_id !== 0){
                 $query->where("pro_id", $search->pro_id);
             }
@@ -66,21 +74,5 @@ class PayService
         }
     }
 
-    public static function getSearchProductPay(){
-        try {
-            $products = Pay::select("pro_id")->distinct()->with('product')->get();
-            return $products;
-        } catch (Exception $e) {
-            LogActivityService::addToLog('getSearchProductPay-catch', $e->getMessage());
-        }
-    }
-
-    public static function getSearchProductDept(){
-        try {
-            $products = Debt::select("pro_id")->distinct()->where('total','>',0)->with('product')->get();
-            return $products;
-        } catch (Exception $e) {
-            LogActivityService::addToLog('getSearchProductPay-catch', $e->getMessage());
-        }
-    }
+    
 }

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Debt;
+use App\Models\Pay;
 use App\Services\LogActivityService;
 
 class ProductService
@@ -30,9 +31,9 @@ class ProductService
         }
     }
 
-    public static function getAllDebt(){
+    public static function getAllDebt($search){
         try {
-            $products = Debt::where('total','>',0)->with('product')->get();
+            $products = Debt::where('warehouse_id', $search->warehouse_id)->where('total','>',0)->with('product')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getAllDebt-catch', $e->getMessage());
@@ -45,6 +46,24 @@ class ProductService
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getSearchProduct-catch', $e->getMessage());
+        }
+    }
+
+    public static function getSearchProductDept($search){
+        try {
+            $products = Debt::select("pro_id")->where('warehouse_id', $search->warehouse_id)->distinct()->where('total','>',0)->with('product')->get();
+            return $products;
+        } catch (Exception $e) {
+            LogActivityService::addToLog('getSearchProductPay-catch', $e->getMessage());
+        }
+    }
+
+    public static function getSearchProductPay($search){
+        try {
+            $products = Pay::select("pro_id")->where('warehouse_id', $search->warehouse_id)->distinct()->with('product')->get();
+            return $products;
+        } catch (Exception $e) {
+            LogActivityService::addToLog('getSearchProductPay-catch', $e->getMessage());
         }
     }
 }

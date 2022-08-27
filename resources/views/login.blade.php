@@ -19,7 +19,7 @@
           class="img-fluid" alt="Sample image">
       </div>
       <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-        <form action="/login" method="post">
+        <form action="/login" method="post" id="form_login">
             @csrf
           <!-- Email input -->
           <div class="form-outline mb-4">
@@ -34,7 +34,15 @@
               placeholder="Enter password" name="password"/>
             <label class="form-label" for="form3Example4">Password</label>
           </div>
-
+          <div class="form-group">
+            @if ($errors->any())
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            @endif
+          </div>
           <div class="d-flex justify-content-between align-items-center">
             <!-- Checkbox -->
             <div class="form-check mb-0">
