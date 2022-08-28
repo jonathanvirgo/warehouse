@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\LogActivityService;
 use App\Services\ProductService;
 use App\Models\Price;
+use Exception;
 
 class ProductController extends Controller
 {

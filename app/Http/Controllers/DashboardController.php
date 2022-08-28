@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\LogActivityService;
 use App\Models\Product;
 use App\Models\Price;
+use Exception;
 
 class DashboardController extends Controller
 {

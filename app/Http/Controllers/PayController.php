@@ -12,6 +12,7 @@ use App\Models\Pay;
 use App\Models\Debt;
 use App\Models\Warehouse;
 use App\Models\Product;
+use Exception;
 
 class PayController extends Controller
 {

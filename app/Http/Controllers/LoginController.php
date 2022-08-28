@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Services\UserService;
+use Exception;
 
 class LoginController extends Controller
 {
