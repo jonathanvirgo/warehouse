@@ -143,7 +143,7 @@
         let totalArr    = 0;
 
         $('#list_product').on('select2:select', function (e) {
-            $('input[id="total"]').attr({"max": $('#list_product option:selected').data('total')});
+            // $('input[id="total"]').attr({"max": $('#list_product option:selected').data('total')});
             let warehouse   = $('#list_warehouse').val();
             getPrice(e.params.data.id, warehouse, 'xuat');
         });

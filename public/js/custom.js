@@ -106,7 +106,7 @@ function validateData(type){
         displayError("Bạn chưa nhập số lượng!");
         return false;
     }else{
-        if(type == 3 || type == 2){
+        if(type == 3){
             let arrPro = arrData.filter(s => s.pro_id == $('#list_product').val());
             if(arrPro.length > 0){
                 for(let item of arrPro){

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Export;
 use App\Services\LogActivityService;
+use Exception;
 
 class ExportService
 {

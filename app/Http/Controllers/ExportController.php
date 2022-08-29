@@ -21,7 +21,8 @@ class ExportController extends Controller
                 $search         = (object)[
                     'warehouse_id'  => $request->get('warehouse_id', 1)
                 ];
-                $products   = ProductService::getAllDebt($search);
+                // $products   = ProductService::getAllDebt($search);
+                $products   = ProductService::getSearchProduct();
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
                 $warehouses = Warehouse::all();
                 $discounts = Discount::all();

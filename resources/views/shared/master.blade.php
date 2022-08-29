@@ -29,7 +29,7 @@
     <script type="text/javascript" src="/js/moment.min.js"></script>
     <script type="text/javascript" src="/js/daterangepicker.min.js"></script>
     <script type="text/javascript" src="/js/flatpickr.js"></script>
-    <script type="text/javascript" src="/js/custom.js"></script>
+    <script type="text/javascript" src="/js/custom.js?v=1.0.0.1"></script>
     
     @section('pageCss')
     @show

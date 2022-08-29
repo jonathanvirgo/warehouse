@@ -39,6 +39,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('pay/list', 'PayController@list');
 
     Route::get('dept/list', 'PayController@deptList');
+    Route::get('dept/list-day', 'PayController@deptListDay');
 
     Route::get('product/list', 'ProductController@list');
     Route::get('product/price', 'ProductController@getPrice');

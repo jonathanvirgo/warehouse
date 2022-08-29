@@ -8,11 +8,14 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\ProductService;
 use App\Services\PayService;
 use App\Services\LogActivityService;
+use App\Services\ImportService;
 use App\Models\Pay;
 use App\Models\Debt;
 use App\Models\Warehouse;
 use App\Models\Product;
+use Illuminate\Support\Str;
 use Exception;
+use DB;
 
 class PayController extends Controller
 {
@@ -189,6 +192,45 @@ class PayController extends Controller
             }
         } catch (Exception $e) {
             LogActivityService::addToLog('listDept-catch', $e->getMessage());
+            $message = $e->getMessage();
+            return view('404', compact('message'));
+        }
+    }
+
+    public function deptListDay(Request $request){
+        $user       = Auth::user();
+        try {
+            if(Auth::check()){
+                $search         = (object)[
+                    'day'           => $request->get('day', date('d-m-Y', strtotime(Carbon::today()))),
+                    'warehouse_id'  => $request->get('warehouse_id', 1)
+                ];
+                // $imports    = ImportService::getImportFollowDay($search);
+                // $pays       = PayService::getPayFollowDay($search);
+
+                $sql = "SELECT import.pro_id,import.price,import.total_import,pay.total_pay,(import.total_import - pay.total_pay) AS total FROM (SELECT SUM(total) AS total_import, pro_id, price FROM imports WHERE warehouse_id = ".$search->warehouse_id." AND DATE(report_date) <= '". date('Y-m-d', strtotime($search->day)) ."' GROUP BY pro_id, price) AS `import` LEFT JOIN (SELECT SUM(total) AS total_pay, pro_id, price FROM pay WHERE warehouse_id = ".$search->warehouse_id." AND DATE(report_date) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS pay ON import.pro_id = pay.pro_id";
+                $sql = "SELECT * FROM (SELECT import.pro_id,import.price,import.total_import,pay.total_pay FROM (SELECT SUM(total) AS total_import, pro_id, price FROM imports WHERE `warehouse_id` = ".$search->warehouse_id." AND DATE(`report_date`) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS `import` LEFT JOIN (SELECT SUM(total) AS total_pay, pro_id, price FROM pay WHERE `warehouse_id` = ".$search->warehouse_id." AND DATE(`report_date`) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS pay ON import.`pro_id` = pay.pro_id) AS `total` INNER JOIN products ON products.id = total.pro_id";
+                $data = DB::select($sql);
+                $warehouses = Warehouse::all();
+                $totalImports   = 0;
+                $totalPay       = 0;
+                foreach($data as $item){
+                    $totalImports += $item->price * $item->total_import;
+                    $totalPay += $item->price * (empty($item->total_pay) ? 0 : $item->total_pay);
+                }
+                return view('table.debtDay',compact(
+                    'search',
+                    'totalPay',
+                    'totalImports',
+                    'warehouses',
+                    'data'
+                ));
+            }else{
+                $message = 'Liên kết không tồn tại';
+                return view('404', compact('message'));
+            }
+        } catch (Exception $e) {
+            LogActivityService::addToLog('deptListDay-catch', $e->getMessage());
             $message = $e->getMessage();
             return view('404', compact('message'));
         }
