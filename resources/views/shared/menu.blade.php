@@ -7,7 +7,7 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
 
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
-        @if(Auth::user()->role_id !== 3)
+        @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
         <li class="nav-item">
           <a class="nav-link {{ request()->path() === 'import/index' ? 'active' : '' }}" href="{{ url('/import/index') }}">Nhập kho</a>
         </li>
@@ -17,6 +17,10 @@
         <li class="nav-item">
           <a class="nav-link {{ request()->path() === 'pay/index' ? 'active' : '' }}" href="{{ url('/pay/index') }}">Thanh toán</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->path() === 'admin' ? 'active' : '' }}" href="{{ url('/admin') }}">Admin</a>
+        </li>
+        @endif
 
         <li class="nav-item">
           <a class="nav-link nav-hide {{ request()->path() === 'product/list' ? 'active' : '' }}" href="{{ url('/product/list') }}">Sản phẩm</a>
@@ -33,7 +37,9 @@
         <li class="nav-item">
           <a class="nav-link nav-hide {{ request()->path() === 'export/list' ? 'active' : '' }}" href="{{ url('/export/list') }}">Danh sách xuất kho</a>
         </li>
-        @endif
+        <li class="nav-item">
+          <a class="nav-link nav-hide {{ request()->path() === 'dept/list-day' ? 'active' : '' }}" href="{{ url('/dept/list-day') }}">Công nợ theo ngày</a>
+        </li>
       </ul>
       <div class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-bs-toggle="dropdown" aria-expanded="true">

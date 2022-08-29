@@ -23,7 +23,7 @@
                         <option value="0">Chọn sản phẩm</option>
                         @if (!empty($products))
                             @foreach ($products as $item)
-                                <option value="{{ $item['pro_id'] }}" data-price="{{$item['price']}}" data-total="{{$item['total']}}">{{ $item->product->name. ' | ' . $item['total'] }}</option>
+                                <option value="{{ $item['id'] }}">{{ $item['name']}}</option>
                             @endforeach
                         @endif
                     </select>
@@ -146,11 +146,13 @@
             // $('input[id="total"]').attr({"max": $('#list_product option:selected').data('total')});
             let warehouse   = $('#list_warehouse').val();
             getPrice(e.params.data.id, warehouse, 'xuat');
+            setPriceAttr(e.params.data.id, warehouse, 'nhap')
         });
 
         $('#list_warehouse').on('select2:select', function (e) {
             let pro_id   = $('#list_product').val();
             getPrice(pro_id, e.params.data.id, 'xuat');
+            setPriceAttr(pro_id,e.params.data.id, 'nhap');
             getInventory(e.params.data.id);
             $('#price').val('');
             $('input[id="total"]').val('');

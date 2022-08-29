@@ -69,7 +69,9 @@
                 <div class="form-group pt-4">
                     <input class="form-check-input" style="margin-top: 12px" type="checkbox" value="" id="confirm_pay">
                     <label class="form-check-label" for="confirm_pay">Đã thanh toán</label>
-                    <a onclick="addData(1)" class="btn btn-primary ms-5"><span class="material-symbols-outlined">add</span></a>
+                    <a onclick="addData(1)" title="Thêm nhập kho" class="btn btn-primary btn-add-local ms-5"><span class="material-symbols-outlined">add</span></a>
+                    <a onclick="saveLocalData(1)" title="Lưu nhập kho" class="btn btn-primary btn-save-local ms-3" style="display: none"><span class="material-symbols-outlined">save</span></a>
+                    <a onclick="cancelSaveLocalData(1)" title="Huỷ" class="btn btn-primary btn-save-local ms-1" style="display: none"><span class="material-symbols-outlined">close</span></a>
                 </div> 
             </div>
         </div>
@@ -84,8 +86,8 @@
                         <th scope="col">Số lượng</th>
                         <th scope="col">Thanh toán</th>
                         <th scope="col">Kho</th>
-                        <th scope="col">Ngày nhập</th>
                         <th scope="col">Ghi chú</th>
+                        <th scope="col">Ngày nhập</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
@@ -107,6 +109,7 @@
 <script>
     let arrImport = [];
     let totalArr = 0;
+    let idEdit;
     $('#list_product').on('select2:select', function (e) {
         let warehouse   = $('#list_warehouse').val();
         getPrice(e.params.data.id, warehouse, 'nhap');

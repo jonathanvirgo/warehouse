@@ -123,7 +123,12 @@ function validateData(type){
             }
         }
     }
-
+    if(type == 2){
+        if(!$('#list_product option:selected').data('price') || $('#list_product option:selected').data('price') == 0){
+            displayError("Sản phẩm chưa có giá nhập!");
+            return false;
+        }
+    }
     // switch(type){
     //     case 1:
     //         break;
@@ -136,63 +141,70 @@ function validateData(type){
     return true;
 }
 
-function addImport(){
+function getData(type){
     let pro_id          = $('#list_product').val();
     let pro_name        = $('#list_product option:selected').text();
     let price           = $('#price').val();
     let total           = $('#total').val();
-    let paied           = $('#confirm_pay').is(":checked");
     let report_date     = $('#report_date').val();
     let note            = $('#note').val();
     let warehouse_id    = $('#list_warehouse').val();
     let warehouse_name  = $('#list_warehouse option:selected').text();
-    let dataImport = {"id": arrImport.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "paied": paied, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
+    let data;
+    switch(type){
+        case 1:
+            let paied   = $('#confirm_pay').is(":checked");
+            data = {"id": arrImport.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "paied": paied, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
+            break;
+        case 2:
+            let price_export    = $('#price').val();
+            let price_import    = $('#list_product option:selected').data('price');
+            let discount_percent = $('#discount_percent').val();
+            let discount_number = $('#discount_number').val();
+            let type_discount   = $('#list_discount').val();
+            let ship            = $('#ship').val();
+            let discount        = $('#discount').val() ? $('#discount').val() : 0;
+            let income          = parseInt(price_export) - parseInt(discount) - parseInt(price_import);
+            data = {"id": arrData.length,"pro_id": pro_id, "pro_name": pro_name, "price_export": price_export,"price_import": price_import, "total": total, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name, "discount_percent": discount_percent,"discount_number": discount_number, "ship":ship,"discount":discount, "income": income < 0 ? 0 : income, "type_discount": type_discount};
+            break;
+        case 3:
+            data = {"id": arrData.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "note": note, "report_date": report_date, "id_debt": id_debt, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
+            break;
+        default: break;
+    }
+    return data;
+}
+
+function addImport(){
+    let dataImport = getData(1);
     arrImport.push(dataImport);
     let html = addImportHtml(dataImport);
     $(".table-responsive").find("tbody").append(html);
 }
 
 function addExport(){
-    let pro_id          = $('#list_product').val();
-    let pro_name        = $('#list_product option:selected').text();
-    let price_export    = $('#price').val();
-    let price_import    = $('#list_product option:selected').data('price');
-    let total           = $('#total').val();
-    let report_date     = $('#report_date').val();
-    let note            = $('#note').val();
-    let warehouse_id    = $('#list_warehouse').val();
-    let warehouse_name  = $('#list_warehouse option:selected').text();
-    let discount_percent = $('#discount_percent').val();
-    let discount_number = $('#discount_number').val();
-    let type_discount   = $('#list_discount').val();
-    let ship            = $('#ship').val();
-    let discount        = $('#discount').val() ? $('#discount').val() : 0;
-    let income          = parseInt(price_export) - parseInt(discount) - parseInt(price_import);
-
-    let dataExport = {"id": arrData.length,"pro_id": pro_id, "pro_name": pro_name, "price_export": price_export,"price_import": price_import, "total": total, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name, "discount_percent": discount_percent,"discount_number": discount_number, "ship":ship,"discount":discount, "income": income < 0 ? 0 : income, "type_discount": type_discount};
+    let dataExport = getData(2);
     arrData.push(dataExport);
     let html = addExportHtml(dataExport);
     $(".table-responsive").find("tbody").append(html);
 }
 
 function addPay(){
-    let pro_id          = $('#list_product').val();
-    let pro_name        = $('#list_product option:selected').text();
-    let price           = $('#price').val();
-    let total           = $('#total').val();
-    let report_date     = $('#report_date').val();
-    let note            = $('#note').val();
-    let warehouse_id    = $('#list_warehouse').val();
-    let warehouse_name  = $('#list_warehouse option:selected').text();
-    let dataPay = {"id": arrData.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "note": note, "report_date": report_date, "id_debt": id_debt, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
+    let dataPay = getData(3);
     arrData.push(dataPay);
     let html = addPayHtml(dataPay);
     $(".table-responsive").find("tbody").append(html);
     totalArr = 0;
 }
 
-function addImportHtml(data){
-    let div   = document.createElement("tr");
+function addImportHtml(data, divWapper = null){
+    let div;
+    if(divWapper){
+        div = divWapper;
+    }else{
+        div = document.createElement("tr");
+        $(div).attr('id', 'tr_'+data.id);
+    }
     let td1  = document.createElement("td");
     let td2  = document.createElement("td");
     let td3  = document.createElement("td");
@@ -215,6 +227,10 @@ function addImportHtml(data){
         let id = $(this).data('id');
         deleteArr(id, 1);
     });
+    $(span2).click(function(){
+        let id = $(this).data('id');
+        editLocal(id, 1);
+    });
     td8.append(span2);
     td8.append(span1);
     
@@ -223,16 +239,17 @@ function addImportHtml(data){
     $(td3).text(data.total);
     $(td4).text(data.paied ? 'Đã thanh toán' : 'Công nợ');
     $(td5).text(data.warehouse_name);
-    $(td6).text(data.note);
-    $(td7).text(data.report_date);
-    $(div).attr('id', 'tr_'+data.id);
-    div.append(td1);
-    div.append(td2);
-    div.append(td3);
-    div.append(td4);
-    div.append(td5);
-    div.append(td6);
-    div.append(td7);
+    $(td6).text(data.report_date);
+    $(td7).text(data.note);
+
+    $(div).append(td1);
+    $(div).append(td2);
+    $(div).append(td3);
+    $(div).append(td4);
+    $(div).append(td5);
+    $(div).append(td6);
+    $(div).append(td7);
+    $(div).append(td8);
     return div;
 }
 
@@ -377,6 +394,46 @@ function deleteArr(index, type){
     });
 }
 
+function editLocal(index, type){
+    switch(type){
+        case 1:
+            for(let [i, item] of arrImport.entries()){
+                if(item.id == index){   
+                    idEdit = index;
+                    console.log("editLocal", index);
+                    setInputData(item, type);
+                    break;
+                }
+            }
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        default: break;
+    }
+}
+
+function setInputData(data, type){
+    $('#list_warehouse').val(data.warehouse_id).trigger('change');
+    $('#list_product').val(data.pro_id).trigger('change');
+    $('#price').val(data.price);
+    $('#total').val(data.total);
+    $('#report_date').val(data.report_date);
+    $('#note').val(data.note);
+    switch(type){
+        case 1:
+            $('#confirm_pay').prop('checked', data.paied);
+            toggleBtnAdd(false);
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        default: break;
+    }
+}
+
 function resetInput(type){
     $('#list_product').val(0).trigger('change');
     $('#price').val("");
@@ -500,7 +557,20 @@ function getPrice(pro_id, warehouse_id, im_export){
     $.get('/product/price?pro_id='+ pro_id + '&warehouse_id=' + warehouse_id + '&im_export='+ im_export, function(response){
         loading.hide();
         if(response.status){
+            if(im_export == 'xuat'){
+
+            }
             $('#price').val(response.price == 0 ? '' : response.price);
+        }else{
+            displayError(response.message);
+        }
+    });
+}
+
+function setPriceAttr(pro_id, warehouse_id, im_export){
+    $.get('/product/price?pro_id='+ pro_id + '&warehouse_id=' + warehouse_id + '&im_export='+ im_export, function(response){
+        if(response.status){
+            $('#list_product option:selected').data('price', response.price);
         }else{
             displayError(response.message);
         }
@@ -554,4 +624,46 @@ function countDiscount(){
         if(ship) discount += parseInt(ship);
     }
     $('#discount').val(discount);
+}
+
+function cancelSaveLocalData(type){
+    resetInput(type);
+    toggleBtnAdd(true);
+}
+
+function toggleBtnAdd(isShow){
+    isShow ? $('.btn-save-local').hide() : $('.btn-save-local').show();
+    isShow ? $('.btn-add-local').show() : $('.btn-add-local').hide();
+}
+
+function saveLocalData(type){
+    let data = getData(type)
+    switch(type){
+        case 1:
+            for(let [i, item] of arrImport.entries()){
+                if(item.id == idEdit){   
+                    idEdit = null;
+                    item.note = data.note;
+                    item.paied = data.paied;
+                    item.price = data.price;
+                    item.pro_id = data.pro_id;
+                    item.pro_name = data.pro_name;
+                    item.report_date = data.report_date;
+                    item.total = data.total;
+                    item.warehouse_id = data.warehouse_id;
+                    item.warehouse_name = data.warehouse_name;
+                    console.log("saveLocalData", data, arrImport, idEdit);
+                    $("#tr_" + idEdit).empty();
+                    // addImportHtml(item, document.getElementById('tr_'+data.id));
+                    break;
+                }
+            }
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        default: break;
+    }
+    cancelSaveLocalData(type);
 }

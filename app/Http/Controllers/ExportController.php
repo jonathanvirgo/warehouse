@@ -23,6 +23,7 @@ class ExportController extends Controller
                 ];
                 // $products   = ProductService::getAllDebt($search);
                 $products   = ProductService::getSearchProduct();
+                // dd($products);
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
                 $warehouses = Warehouse::all();
                 $discounts = Discount::all();
