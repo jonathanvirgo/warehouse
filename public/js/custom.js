@@ -199,9 +199,7 @@ function addPay(){
 
 function addImportHtml(data, divWapper = null){
     let div;
-    if(divWapper){
-        div = divWapper;
-    }else{
+    if(!divWapper){
         div = document.createElement("tr");
         $(div).attr('id', 'tr_'+data.id);
     }
@@ -241,15 +239,26 @@ function addImportHtml(data, divWapper = null){
     $(td5).text(data.warehouse_name);
     $(td6).text(data.report_date);
     $(td7).text(data.note);
-
-    $(div).append(td1);
-    $(div).append(td2);
-    $(div).append(td3);
-    $(div).append(td4);
-    $(div).append(td5);
-    $(div).append(td6);
-    $(div).append(td7);
-    $(div).append(td8);
+    if(!divWapper){
+        $(div).append(td1);
+        $(div).append(td2);
+        $(div).append(td3);
+        $(div).append(td4);
+        $(div).append(td5);
+        $(div).append(td6);
+        $(div).append(td7);
+        $(div).append(td8);
+    }else{
+        $(divWapper).append(td1);
+        $(divWapper).append(td2);
+        $(divWapper).append(td3);
+        $(divWapper).append(td4);
+        $(divWapper).append(td5);
+        $(divWapper).append(td6);
+        $(divWapper).append(td7);
+        $(divWapper).append(td8);
+    }
+    
     return div;
 }
 
@@ -400,7 +409,6 @@ function editLocal(index, type){
             for(let [i, item] of arrImport.entries()){
                 if(item.id == index){   
                     idEdit = index;
-                    console.log("editLocal", index);
                     setInputData(item, type);
                     break;
                 }
@@ -557,9 +565,6 @@ function getPrice(pro_id, warehouse_id, im_export){
     $.get('/product/price?pro_id='+ pro_id + '&warehouse_id=' + warehouse_id + '&im_export='+ im_export, function(response){
         loading.hide();
         if(response.status){
-            if(im_export == 'xuat'){
-
-            }
             $('#price').val(response.price == 0 ? '' : response.price);
         }else{
             displayError(response.message);
@@ -642,7 +647,6 @@ function saveLocalData(type){
         case 1:
             for(let [i, item] of arrImport.entries()){
                 if(item.id == idEdit){   
-                    idEdit = null;
                     item.note = data.note;
                     item.paied = data.paied;
                     item.price = data.price;
@@ -652,9 +656,9 @@ function saveLocalData(type){
                     item.total = data.total;
                     item.warehouse_id = data.warehouse_id;
                     item.warehouse_name = data.warehouse_name;
-                    console.log("saveLocalData", data, arrImport, idEdit);
                     $("#tr_" + idEdit).empty();
-                    // addImportHtml(item, document.getElementById('tr_'+data.id));
+                    addImportHtml(item, 'tr_'+data.id);
+                    idEdit = null;
                     break;
                 }
             }
