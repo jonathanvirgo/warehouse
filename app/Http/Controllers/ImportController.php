@@ -10,6 +10,8 @@ use App\Services\ImportService;
 use App\Services\LogActivityService;
 use App\Models\Import;
 use App\Models\Debt;
+use App\Models\Pay;
+use App\Models\Export;
 use App\Models\Product;
 use App\Models\Warehouse;
 use Exception;
@@ -62,7 +64,7 @@ class ImportController extends Controller
                             $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price)->where("warehouse_id", $item->warehouse_id)->first();
                             if($dept){
                                 $total = $dept->total + $inputs['total'];
-                                $dept->update(["total" => $total, "type_id" => (int)$product->type_id]);
+                                $dept->update(["total" => $total]);
                             }else{
                                 Debt::create($inputs);
                             }
@@ -137,6 +139,65 @@ class ImportController extends Controller
             LogActivityService::addToLog('listImport-catch', $e->getMessage());
             $message = $e->getMessage();
             return view('404', compact('message'));
+        }
+    }
+
+    public function delete(Request $request){
+        $user       = Auth::user();
+        $result = array('status' => true, 'message' => 'Xoá thành công', 'url' => '/import/list');
+        try {
+            if($request->has('id') && Auth::check() && in_array($user->role_id, [1,2])){
+                switch($request->type){
+                    case 1:
+                        $import = Import::find($request->id);
+                        if($import){
+                            $debt = Debt::where("pro_id", $import->pro_id)->where("price", $import->price)->first();
+                            if(!empty($debt) && $debt->total > $import->total){
+                                $debt->update(["total" => ($debt->total - $import->total)]);
+                                $import->delete();
+                            }else{
+                                $result['status'] = false;
+                                $result['message'] = "Số lượng nhập xoá đi lớn hơn số lượng còn lại";
+                            }
+                        }else{
+                            $result['status'] = false;
+                            $result['message'] = "Không tồn tại dữ liệu";
+                        }
+                        break;
+                    case 2:
+                        $export = Export::find($request->id);
+                        if($export){
+                            $export->delete();
+                        }else{
+                            $result['status'] = false;
+                            $result['message'] = "Không tồn tại dữ liệu";
+                        }
+                        break;
+                    case 3:
+                        $pay = Pay::find($request->id);
+                        if($pay){
+                            $debt = Debt::where("pro_id", $pay->pro_id)->where("price", $pay->price)->first();
+                            if(!empty($debt)){
+                                $debt->update(["total" => ($debt->total + $pay->total)]);
+                            }
+                            $pay->delete();
+                        }else{
+                            $result['status'] = false;
+                            $result['message'] = "Không tồn tại dữ liệu";
+                        }
+                        break;
+                    default: break;
+                }
+            }else{
+                $result['status'] = false;
+                $result['message'] = "Bạn không có quyền xoá";
+            }
+            return response()->json($result, 200);
+        }catch (Exception $e) {
+            $result['status'] = false;
+            $result['message'] = $e->getMessage();
+            LogActivityService::addToLog('deleteImport-catch', $e->getMessage());
+            return response()->json($result, 200);
         }
     }
 }

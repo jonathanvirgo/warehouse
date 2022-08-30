@@ -92,8 +92,8 @@
           <th scope="col">Tổng doanh thu</th>
           <th scope="col">Ghi chú</th>
           <th scope="col">Ngày nhập</th>
-          @if(Auth::user()->role_id !== 3)
-          <!-- <th scope="col"></th> -->
+          @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+          <th scope="col"></th>
           @endif
         </tr>
       </thead>
@@ -110,10 +110,10 @@
             <td>{{number_format($item['income'] * $item['total'])}}</td>
             <td>{{$item['note']}}</td>
             <td>{{date('d/m/Y', strtotime($item->report_date))}}</td>
-            @if(Auth::user()->role_id !== 3)
-            <!-- <td class="d-flex" style="color:#000">
-              <a onclick="deleteTable('$item->id')"><span class="material-icons">close</span></a>
-            </td> -->
+            @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+            <td class="d-flex" style="color:#000; cursor:pointer">
+              <a onclick="deleteTable('{{$item->id}}', 2)"><span class="material-icons">close</span></a>
+            </td>
             @endif
           </tr>
           @endforeach

@@ -168,6 +168,7 @@ function getData(type){
             data = {"id": arrData.length,"pro_id": pro_id, "pro_name": pro_name, "price_export": price_export,"price_import": price_import, "total": total, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name, "discount_percent": discount_percent,"discount_number": discount_number, "ship":ship,"discount":discount, "income": income < 0 ? 0 : income, "type_discount": type_discount};
             break;
         case 3:
+            id_debt = $('#list_product option:selected').data("id");
             data = {"id": arrData.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "note": note, "report_date": report_date, "id_debt": id_debt, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
             break;
         default: break;
@@ -197,12 +198,10 @@ function addPay(){
     totalArr = 0;
 }
 
-function addImportHtml(data, divWapper = null){
-    let div;
-    if(!divWapper){
-        div = document.createElement("tr");
-        $(div).attr('id', 'tr_'+data.id);
-    }
+function addImportHtml(data, id = ''){
+    let div = document.createElement("tr");
+    $(div).attr('id', 'tr_'+data.id);
+
     let td1  = document.createElement("td");
     let td2  = document.createElement("td");
     let td3  = document.createElement("td");
@@ -239,7 +238,16 @@ function addImportHtml(data, divWapper = null){
     $(td5).text(data.warehouse_name);
     $(td6).text(data.report_date);
     $(td7).text(data.note);
-    if(!divWapper){
+    if(id.length > 0){
+        $(id).append(td1);
+        $(id).append(td2);
+        $(id).append(td3);
+        $(id).append(td4);
+        $(id).append(td5);
+        $(id).append(td6);
+        $(id).append(td7);
+        $(id).append(td8);
+    }else{
         $(div).append(td1);
         $(div).append(td2);
         $(div).append(td3);
@@ -248,21 +256,11 @@ function addImportHtml(data, divWapper = null){
         $(div).append(td6);
         $(div).append(td7);
         $(div).append(td8);
-    }else{
-        $(divWapper).append(td1);
-        $(divWapper).append(td2);
-        $(divWapper).append(td3);
-        $(divWapper).append(td4);
-        $(divWapper).append(td5);
-        $(divWapper).append(td6);
-        $(divWapper).append(td7);
-        $(divWapper).append(td8);
+        return div;
     }
-    
-    return div;
 }
 
-function addExportHtml(data){
+function addExportHtml(data, id = ''){
     let div   = document.createElement("tr");
     let td1  = document.createElement("td");
     let td2  = document.createElement("td");
@@ -287,6 +285,10 @@ function addExportHtml(data){
         let id = $(this).data('id');
         deleteArr(id, 2);
     });
+    $(span2).click(function(){
+        let id = $(this).data('id');
+        editLocal(id, 2);
+    });
     td9.append(span2);
     td9.append(span1);
     $(td1).text(data.pro_name);
@@ -298,19 +300,33 @@ function addExportHtml(data){
     $(td7).text(data.note);
     $(td8).text(data.report_date);
     $(div).attr('id', 'tr_'+data.id);
-    div.append(td1);
-    div.append(td2);
-    div.append(td3);
-    div.append(td4);
-    div.append(td5);
-    div.append(td6);
-    div.append(td7);
-    div.append(td8);
-    div.append(td9);
+
+    if(id.length > 0){
+        $(id).append(td1);
+        $(id).append(td2);
+        $(id).append(td3);
+        $(id).append(td4);
+        $(id).append(td5);
+        $(id).append(td6);
+        $(id).append(td7);
+        $(id).append(td8);
+        $(id).append(td9);
+    }else{
+        div.append(td1);
+        div.append(td2);
+        div.append(td3);
+        div.append(td4);
+        div.append(td5);
+        div.append(td6);
+        div.append(td7);
+        div.append(td8);
+        div.append(td9);
+    }
+
     return div;
 }
 
-function addPayHtml(data){
+function addPayHtml(data, id = ''){
     let div   = document.createElement("tr");
     let td1  = document.createElement("td");
     let td2  = document.createElement("td");
@@ -333,6 +349,10 @@ function addPayHtml(data){
         let id = $(this).data('id');
         deleteArr(id, 3);
     });
+    $(span2).click(function(){
+        let id = $(this).data('id');
+        editLocal(id, 3);
+    });
     td7.append(span2);
     td7.append(span1);
     
@@ -344,12 +364,24 @@ function addPayHtml(data){
     $(td5).text(data.note);
     $(td6).text(data.report_date);
     $(div).attr('id', 'tr_'+data.id);
-    div.append(td1);
-    div.append(td2);
-    div.append(td3);
-    div.append(td4);
-    div.append(td5);
-    div.append(td6);
+
+    if(id.length > 0){
+        $(id).append(td1);
+        $(id).append(td2);
+        $(id).append(td3);
+        $(id).append(td4);
+        $(id).append(td5);
+        $(id).append(td6);
+        $(id).append(td7);
+    }else{
+        div.append(td1);
+        div.append(td2);
+        div.append(td3);
+        div.append(td4);
+        div.append(td5);
+        div.append(td6);
+        div.append(td7);
+    }
     return div;
 }
 
@@ -414,9 +446,15 @@ function editLocal(index, type){
                 }
             }
             break;
-        case 2:
-            break;
+        case 2:  
         case 3:
+            for(let [i, item] of arrData.entries()){
+                if(item.id == index){   
+                    idEdit = index;
+                    setInputData(item, type);
+                    break;
+                }
+            }
             break;
         default: break;
     }
@@ -429,14 +467,21 @@ function setInputData(data, type){
     $('#total').val(data.total);
     $('#report_date').val(data.report_date);
     $('#note').val(data.note);
+    toggleBtnAdd(false);
     switch(type){
         case 1:
             $('#confirm_pay').prop('checked', data.paied);
-            toggleBtnAdd(false);
             break;
         case 2:
+            $('#price').val(data.price_export);
+            $('#discount_percent').val(data.discount_percent);
+            $('#discount_number').val(data.discount_number);
+            $('#list_discount').val(data.type_discount).trigger('change');
+            $('#ship').val(data.ship);
+            $('#discount').val(data.discount);
             break;
         case 3:
+            
             break;
         default: break;
     }
@@ -449,6 +494,13 @@ function resetInput(type){
     $('#confirm_pay').prop('checked', false);
     switch(type){
         case 1:
+            break;
+        case 2:
+            $('#list_discount').val(3).trigger('change');
+            $('#discount_percent').val("");
+            $('#discount_number').val("");
+            $('#ship').val("");
+            $('#discount').val("");
             break;
         default: break;
     }
@@ -497,7 +549,7 @@ function save(type){
 }
 
 function callAjax(url, data){
-    let loading      = $("#loading-page");
+    let loading = $("#loading-page");
     $.ajax({
         url: url,
         data: data,
@@ -522,8 +574,6 @@ function callAjax(url, data){
 }
 
 function deleteTable(id, type){
-    let url ="";
-    let data = {};
     $.confirm({
         title: 'Bạn có chắc chắn muốn xoá không?',
         content: '',
@@ -532,17 +582,8 @@ function deleteTable(id, type){
             accept:{
                 text: 'Đồng ý',
                 action:function () {
-                    switch(type){
-                        case 1:
-                            url = "/import/delete";
-                            data = {"id" : id};
-                            break;
-                        case 3:
-                            url = "/pay/delete";
-                            data = {"id" : id};
-                            break;
-                        default: break;
-                    }
+                    let url = "/import/delete";
+                    let data = {"id" : id, "type": type};
                     callAjax(url, data);
                 },
                 btnClass: 'btn-success',
@@ -657,15 +698,56 @@ function saveLocalData(type){
                     item.warehouse_id = data.warehouse_id;
                     item.warehouse_name = data.warehouse_name;
                     $("#tr_" + idEdit).empty();
-                    addImportHtml(item, 'tr_'+data.id);
+                    addImportHtml(item, '#tr_' + idEdit);
                     idEdit = null;
                     break;
                 }
             }
             break;
         case 2:
+            for(let [i, item] of arrData.entries()){
+                if(item.id == idEdit){   
+                    item.discount           = data.discount;
+                    item.discount_number    = data.discount_number;
+                    item.discount_percent   = data.discount_percent;
+                    item.income             = data.income;
+                    item.note               = data.note;
+                    item.price_export       = data.price_export;
+                    item.price_import       = data.price_import;
+                    item.pro_id             = data.pro_id;
+                    item.pro_name           = data.pro_name;
+                    item.report_date        = data.report_date;
+                    item.ship               = data.ship;
+                    item.total              = data.total;
+                    item.type_discount      = data.type_discount;
+                    item.warehouse_id       = data.warehouse_id;
+                    item.warehouse_name     = data.warehouse_name;
+
+                    $("#tr_" + idEdit).empty();
+                    addExportHtml(item, '#tr_' + idEdit);
+                    idEdit = null;
+                    break;
+                }
+            }
             break;
         case 3:
+            for(let [i, item] of arrData.entries()){
+                if(item.id == idEdit){   
+                    item.note = data.note;
+                    item.price = data.price;
+                    item.pro_id = data.pro_id;
+                    item.pro_name = data.pro_name;
+                    item.report_date = data.report_date;
+                    item.total = data.total;
+                    item.warehouse_id = data.warehouse_id;
+                    item.warehouse_name = data.warehouse_name;
+                    
+                    $("#tr_" + idEdit).empty();
+                    addPayHtml(item, '#tr_' + idEdit);
+                    idEdit = null;
+                    break;
+                }
+            }
             break;
         default: break;
     }

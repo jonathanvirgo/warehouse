@@ -37,6 +37,7 @@ class ProductService
     public static function getAllDebt($search){
         try {
             $products = Debt::where('warehouse_id', $search->warehouse_id)->where('total','>',0)->with('product')->get();
+            // dd($products);
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getAllDebt-catch', $e->getMessage());

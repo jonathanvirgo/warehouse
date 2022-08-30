@@ -100,7 +100,9 @@
                     <label for="note" class="mb-1">Ghi chú</label>
                     <div class="d-flex">
                         <input type="text" class="form-control" id="note" value="">
-                        <a onclick="addData(2)" class="btn btn-primary ms-1"><span class="material-symbols-outlined">add</span></a>
+                        <a onclick="addData(2)" class="btn btn-primary ms-1 btn-add-local"><span class="material-symbols-outlined">add</span></a>
+                        <a onclick="saveLocalData(2)" title="Lưu nhập kho" class="btn btn-primary btn-save-local ms-3" style="display: none"><span class="material-symbols-outlined">save</span></a>
+                        <a onclick="cancelSaveLocalData(2)" title="Huỷ" class="btn btn-primary btn-save-local ms-1" style="display: none"><span class="material-symbols-outlined">close</span></a>
                     </div>
                 </div>
             </div>

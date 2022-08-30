@@ -29,9 +29,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('export/index', 'ExportController@index');
     Route::post('export/store', 'ExportController@store');
     Route::get('export/list', 'ExportController@list');
+    
 
     Route::get('import/index', 'ImportController@index');
     Route::post('import/store', 'ImportController@store');
+    Route::post('import/delete', 'ImportController@delete');
     Route::get('import/list', 'ImportController@list');
 
     Route::get('pay/index', 'PayController@index');

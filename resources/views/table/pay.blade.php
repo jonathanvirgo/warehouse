@@ -75,6 +75,9 @@
           <th scope="col">Tổng giá</th>
           <th scope="col">Ghi chú</th>
           <th scope="col">Ngày thanh toán</th>
+          @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+          <th scope="col"></th>
+          @endif
         </tr>
       </thead>
       <tbody>
@@ -86,6 +89,11 @@
             <td>{{number_format($item['price'] * $item['total'])}}</td>
             <td>{{$item['note']}}</td>
             <td>{{date('d/m/Y', strtotime($item->report_date))}}</td>
+            @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
+            <td class="d-flex" style="color:#000; cursor:pointer">
+              <a onclick="deleteTable('{{$item->id}}', 3)"><span class="material-icons">close</span></a>
+            </td>
+            @endif
           </tr>
           @endforeach
           <tr>
