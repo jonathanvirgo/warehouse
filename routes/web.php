@@ -29,16 +29,19 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('export/index', 'ExportController@index');
     Route::post('export/store', 'ExportController@store');
     Route::get('export/list', 'ExportController@list');
+    Route::get('export/edit/{id}', 'ExportController@index');
     
 
     Route::get('import/index', 'ImportController@index');
     Route::post('import/store', 'ImportController@store');
     Route::post('import/delete', 'ImportController@delete');
     Route::get('import/list', 'ImportController@list');
+    Route::get('import/edit/{id}', 'ImportController@index');
 
     Route::get('pay/index', 'PayController@index');
     Route::post('pay/store', 'PayController@store');
     Route::get('pay/list', 'PayController@list');
+    Route::get('pay/edit/{id}', 'PayController@index');
 
     Route::get('dept/list', 'PayController@deptList');
     Route::get('dept/list-day', 'PayController@deptListDay');

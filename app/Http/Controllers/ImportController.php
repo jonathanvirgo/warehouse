@@ -18,17 +18,21 @@ use Exception;
 
 class ImportController extends Controller
 {
-    public function index(Request $request){
-        $user       = Auth::user();
+    public function index(Request $request, $id = null){
+        $import     = collect([]);
         try {
             if(Auth::check()){
                 $products   = ProductService::getSearchProduct();
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
                 $warehouses = Warehouse::all();
+                if(!empty($id)){
+                    $import = Import::find($id);
+                }
                 return view('common.import',compact(
                     'products',
                     'today',
-                    'warehouses'
+                    'warehouses',
+                    'import'
                 ));
             }else{
                 $message = 'Liên kết không tồn tại';
@@ -49,24 +53,65 @@ class ImportController extends Controller
             if($request->has('arrImport') && Auth::check()){
                 $arrImport = json_decode($request->arrImport);
                 if(count($arrImport) > 0){
-                    foreach($arrImport as $item){
-                        $inputs = [
-                            "pro_id"        => $item->pro_id,
-                            "total"         => (int)$item->total,
-                            "price"         => (int)$item->price,
-                            "report_date"   => date('Y-m-d', strtotime($item->report_date)),
-                            "note"          => $item->note,
-                            "created_by"    => $user->id,
-                            "warehouse_id"  => $item->warehouse_id
-                        ];
-                        Import::create($inputs);
-                        if($item->paied == false){
-                            $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price)->where("warehouse_id", $item->warehouse_id)->first();
-                            if($dept){
-                                $total = $dept->total + $inputs['total'];
-                                $dept->update(["total" => $total]);
+                    if($request->has('id')){
+                        $import = Import::find($request->id);
+                        if($import){
+                            $item = $arrImport[0];
+                            $debt = Debt::where("pro_id", $import->pro_id)->where("price", $import->price)->first();
+                            $changeTotal = $item->total - $import->total;
+                            //Không trống công nợ
+                            if(!empty($debt)){
+                                // Giảm số lượng
+                                if($changeTotal <= 0){
+                                    //Số công nợ lớn hơn số giảm
+                                    if($debt->total >= abs($changeTotal)){
+                                        $debt->update(["total" => ($debt->total + $changeTotal)]);
+                                    }else{
+                                        $result['status'] = false;
+                                        $result['message'] = "Số lượng giảm lớn hơn số lượng còn lại";
+                                        return response()->json($result, 200);
+                                    }
+                                }else{
+                                    $debt->update(["total" => ($debt->total + $changeTotal)]);
+                                }
                             }else{
-                                Debt::create($inputs);
+                                $result['status'] = false;
+                                $result['message'] = "Đã thanh toán hết số lượng sản phẩm";
+                                return response()->json($result, 200);
+                            }
+                            $inputs = [
+                                "pro_id"        => $item->pro_id,
+                                "total"         => (int)$item->total,
+                                "price"         => (int)$item->price,
+                                "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                "note"          => $item->note,
+                                "warehouse_id"  => $item->warehouse_id
+                            ];
+                            $import->update($inputs);
+                        }else{
+                            $result['status']  = false;
+                            $result['message'] = "Không tồn tại bản ghi";
+                        }
+                    }else{
+                        foreach($arrImport as $item){
+                            $inputs = [
+                                "pro_id"        => $item->pro_id,
+                                "total"         => (int)$item->total,
+                                "price"         => (int)$item->price,
+                                "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                "note"          => $item->note,
+                                "created_by"    => $user->id,
+                                "warehouse_id"  => $item->warehouse_id
+                            ];
+                            Import::create($inputs);
+                            if($item->paied == false){
+                                $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price)->where("warehouse_id", $item->warehouse_id)->first();
+                                if($dept){
+                                    $total = $dept->total + $inputs['total'];
+                                    $dept->update(["total" => $total]);
+                                }else{
+                                    Debt::create($inputs);
+                                }
                             }
                         }
                     }

@@ -113,6 +113,7 @@
             @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
             <td class="d-flex" style="color:#000; cursor:pointer">
               <a onclick="deleteTable('{{$item->id}}', 2)"><span class="material-icons">close</span></a>
+              <a onclick="editTable('{{$item->id}}', 2)"><span class="material-icons">edit</span></a>
             </td>
             @endif
           </tr>

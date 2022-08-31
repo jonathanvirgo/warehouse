@@ -64,8 +64,6 @@ $(document).ready(function(){
     });
 });
 
-
-
 function addData(type){
     //type 1 Import
     //type 2 Export
@@ -506,7 +504,7 @@ function resetInput(type){
     }
 }
 
-function save(type){
+function save(type, id = ''){
     let url ="";
     let data = {};
     $.confirm({
@@ -531,6 +529,9 @@ function save(type){
                             data = {"arrPay" : JSON.stringify(arrData)};
                             break;
                         default: break;
+                    }
+                    if(id){
+                        data['id'] = id;
                     }
                     callAjax(url, data);
                 },
@@ -583,6 +584,16 @@ function deleteTable(id, type){
                 text: 'Đồng ý',
                 action:function () {
                     let url = "/import/delete";
+                    switch(type){
+                        case 2:
+                            url = "/export/delete";
+                            break;
+                        case 3:
+                            url = "/pay/delete";
+                            break;
+                        default: break;
+                    }
+                    
                     let data = {"id" : id, "type": type};
                     callAjax(url, data);
                 },
@@ -752,4 +763,34 @@ function saveLocalData(type){
         default: break;
     }
     cancelSaveLocalData(type);
+}
+
+function editTable(id, type){
+    switch(type){
+        case 1:
+            window.location.href = "/import/edit/"+id;
+            break;
+        case 2:
+            window.location.href = "/export/edit/"+id;
+            break;
+        case 3:
+            window.location.href = "/pay/edit/"+id;
+            break;
+        default: break;
+    }
+}
+
+function saveEdit(id, type){
+    let data = getData(type);
+    switch(type){
+        case 1:
+            arrImport.push(data);
+            break;
+        case 2:
+        case 3:
+            arrData.push(data);
+            break;
+        default: break;
+    }
+    save(type, id);
 }

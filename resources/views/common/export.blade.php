@@ -23,7 +23,8 @@
                         <option value="0">Chọn sản phẩm</option>
                         @if (!empty($products))
                             @foreach ($products as $item)
-                                <option value="{{ $item['id'] }}">{{ $item['name']}}</option>
+                                <?php $product_selected = (isset($export['pro_id']) && $item['id'] == $export['pro_id']) ? 'selected' : ''; ?>
+                                <option {{$product_selected}} value="{{ $item['id'] }}">{{ $item['name']}}</option>
                             @endforeach
                         @endif
                     </select>
@@ -32,7 +33,7 @@
             <div class="col-12 col-sm-6 col-md-3 mb-2">
                 <div class="form-group">
                     <label for="price" class="mb-1">Giá</label>
-                    <input id="price" min="1000" type="number" class="form-control" placeholder="Giá xuất">
+                    <input id="price" min="1000" type="number" class="form-control" placeholder="Giá xuất" value="<?php echo !empty($export['price_export']) ? $export['price_export'] : '';?>" readonly>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3 mb-2">
@@ -41,7 +42,8 @@
                     <select id="list_warehouse" class="form-control select2">
                         @if (!empty($warehouses))
                             @foreach ($warehouses as $item)
-                                <option value="{{ $item['id'] }}" >{{ $item["name"] }}</option>
+                                <?php $warehouse_selected = (isset($export['warehouse_id']) && $item['id'] == $export['warehouse_id']) ? 'selected' : ''; ?>
+                                <option {{$warehouse_selected}} value="{{ $item['id'] }}" >{{ $item["name"] }}</option>
                             @endforeach
                         @endif
                     </select>
@@ -50,7 +52,7 @@
             <div class="col-12 col-sm-6 col-md-4 mb-2">
                 <div class="form-group">
                     <label for="total" class="mb-1">Số lượng</label>
-                    <input id="total" min="1" type="number" class="form-control" placeholder="Số lượng">
+                    <input id="total" min="1" type="number" class="form-control" placeholder="Số lượng" value="<?php echo !empty($export['total']) ? $export['total'] : '';?>">
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-4 mb-2">
@@ -68,41 +70,46 @@
             <div class="col-12 col-sm-6 col-md-4 mb-2">
                 <div class="form-group">
                     <label for="report_date" class="mb-1">Ngày xuất</label>
-                    <input type="text" class="form-control" id="report_date" value="{{$today}}">
+                    <input type="text" class="form-control" id="report_date" value="{{isset($export['report_date']) ? date('d-m-Y', strtotime($export['report_date'])) : $today}}">
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-4 mb-2">
                 <div class="form-group">
                     <label for="discount_percent" class="mb-1">Chiếu khấu (%)</label>
-                    <input id="discount_percent" min="1" type="number" class="form-control" placeholder="%" oninput="countDiscount()">
+                    <input id="discount_percent" min="1" type="number" class="form-control" placeholder="%" oninput="countDiscount()" readonly>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-4 mb-2">
                 <div class="form-group">
                     <label for="discount_number" class="mb-1">Chiếu khấu (đ)</label>
-                    <input id="discount_number" min="1" type="number" class="form-control" placeholder="VNĐ" oninput="countDiscount()">
+                    <input id="discount_number" min="1" type="number" class="form-control" placeholder="VNĐ" oninput="countDiscount()" value="<?php echo !empty($export['discount_number']) ? $export['discount_number'] : '';?>">
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-4 mb-2">
                 <div class="form-group">
                     <label for="ship" class="mb-1">Ship</label>
-                    <input id="ship" min="1" type="number" class="form-control" placeholder="VNĐ" oninput="countDiscount()">
+                    <input id="ship" min="1" type="number" class="form-control" placeholder="VNĐ" oninput="countDiscount()" value="<?php echo !empty($export['ship']) ? $export['ship'] : '';?>">
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3 mb-2">
                 <div class="form-group">
                     <label for="discount" class="mb-1">Tổng chiết khấu</label>
-                    <input id="discount" min="1" type="number" class="form-control" placeholder="VNĐ">
+                    <input id="discount" min="1" type="number" class="form-control" placeholder="VNĐ" value="<?php echo !empty($export['discount']) ? $export['discount'] : '';?>">
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-9 mb-2">
                 <div class="form-group">
                     <label for="note" class="mb-1">Ghi chú</label>
                     <div class="d-flex">
-                        <input type="text" class="form-control" id="note" value="">
-                        <a onclick="addData(2)" class="btn btn-primary ms-1 btn-add-local"><span class="material-symbols-outlined">add</span></a>
-                        <a onclick="saveLocalData(2)" title="Lưu nhập kho" class="btn btn-primary btn-save-local ms-3" style="display: none"><span class="material-symbols-outlined">save</span></a>
-                        <a onclick="cancelSaveLocalData(2)" title="Huỷ" class="btn btn-primary btn-save-local ms-1" style="display: none"><span class="material-symbols-outlined">close</span></a>
+                        <input type="text" class="form-control" id="note" value="<?php echo !empty($export['note']) ? $export['note'] : '';?>">
+                        @if(isset($export['id']))
+                            <a onclick="saveEdit('{{$export['id']}}',2)" title="Lưu" class="btn btn-primary btn-add-local ms-5"><span class="material-symbols-outlined">save</span></a>
+                        @else
+                            <a onclick="addData(2)" class="btn btn-primary ms-1 btn-add-local"><span class="material-symbols-outlined">add</span></a>
+                            <a onclick="saveLocalData(2)" title="Lưu nhập kho" class="btn btn-primary btn-save-local ms-3" style="display: none"><span class="material-symbols-outlined">save</span></a>
+                            <a onclick="cancelSaveLocalData(2)" title="Huỷ" class="btn btn-primary btn-save-local ms-1" style="display: none"><span class="material-symbols-outlined">close</span></a>
+                        @endif
+                        
                     </div>
                 </div>
             </div>
@@ -171,6 +178,14 @@
         $(document).ready(function(){
             arrProduct = @json($products);
             $("#list_discount").val(3).trigger('change');
+            @if(isset($export['id']))
+                $('#list_discount').val(<?php echo $export['type_discount'] ?>).trigger('change');
+                let percent = $('#list_discount option:selected').data('percent');
+                $('#discount_percent').val(percent);
+                let warehouse   = $('#list_warehouse').val();
+                let pro_id   = $('#list_product').val();
+                setPriceAttr(pro_id,warehouse, 'nhap');
+            @endif
         });
     </script>
 @stop

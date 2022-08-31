@@ -23,7 +23,8 @@
                         <option value="0">Chọn sản phẩm</option>
                         @if (!empty($products))
                             @foreach ($products as $item)
-                                <option value="{{ $item['id'] }}">{{ $item["name"] }}</option>
+                                <?php $product_selected = (isset($import['pro_id']) && $item['id'] == $import['pro_id']) ? 'selected' : ''; ?>
+                                <option {{$product_selected}} value="{{ $item['id'] }}">{{ $item["name"] }}</option>
                             @endforeach
                         @endif
                     </select>
@@ -32,7 +33,7 @@
             <div class="col-12 col-sm-6 col-md-3 mb-2">
                 <div class="form-group">
                     <label for="price" class="mb-1">Giá</label>
-                    <input id="price" min="1000" type="number" class="form-control" placeholder="Giá nhập">
+                    <input id="price" min="1000" type="number" class="form-control" placeholder="Giá nhập" value="<?php echo !empty($import['price']) ? $import['price'] : '';?>" readonly>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-3 mb-2">
@@ -41,7 +42,8 @@
                     <select id="list_warehouse" class="form-control select2">
                         @if (!empty($warehouses))
                             @foreach ($warehouses as $item)
-                                <option value="{{ $item['id'] }}" >{{ $item["name"] }}</option>
+                                <?php $warehouse_selected = (isset($import['warehouse_id']) && $item['id'] == $import['warehouse_id']) ? 'selected' : ''; ?>
+                                <option {{$warehouse_selected}} value="{{ $item['id'] }}" >{{ $item["name"] }}</option>
                             @endforeach
                         @endif
                     </select>
@@ -50,29 +52,33 @@
             <div class="col-12 col-sm-6 mb-2">
                 <div class="form-group">
                     <label for="total" class="mb-1">Số lượng</label>
-                    <input id="total" min="1" type="number" class="form-control" placeholder="Số lượng">
+                    <input id="total" min="1" type="number" class="form-control" placeholder="Số lượng" value="<?php echo !empty($import['total']) ? $import['total'] : '';?>">
                 </div>
             </div>
             <div class="col-12 col-sm-6 mb-2">
                 <div class="form-group">
                     <label for="report_date" class="mb-1">Ngày nhập</label>
-                    <input type="text" class="form-control" id="report_date" value="{{$today}}">
+                    <input type="text" class="form-control" id="report_date" value="{{isset($import['report_date']) ? date('d-m-Y', strtotime($import['report_date'])) : $today}}">
                 </div>
             </div>
             <div class="col-12 col-sm-12 col-md-12 col-lg-8 mb-2">
                 <div class="form-group">
                     <label for="note" class="mb-1">Ghi chú</label>
-                    <input type="text" class="form-control" id="note" value="">
+                    <input type="text" class="form-control" id="note" value="<?php echo !empty($import['note']) ? $import['note'] : '';?>">
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-md-6 col-lg-4 mb-2">
                 <div class="form-group pt-4">
                     <input class="form-check-input" style="margin-top: 12px" type="checkbox" value="" id="confirm_pay">
                     <label class="form-check-label" for="confirm_pay">Đã thanh toán</label>
-                    <a onclick="addData(1)" title="Thêm nhập kho" class="btn btn-primary btn-add-local ms-5"><span class="material-symbols-outlined">add</span></a>
-                    <a onclick="saveLocalData(1)" title="Lưu nhập kho" class="btn btn-primary btn-save-local ms-3" style="display: none"><span class="material-symbols-outlined">save</span></a>
-                    <a onclick="cancelSaveLocalData(1)" title="Huỷ" class="btn btn-primary btn-save-local ms-1" style="display: none"><span class="material-symbols-outlined">close</span></a>
-                </div> 
+                    @if(isset($import['id']))
+                        <a onclick="saveEdit('{{$import['id']}}',1)" title="Lưu" class="btn btn-primary btn-add-local ms-5"><span class="material-symbols-outlined">save</span></a>
+                    @else
+                        <a onclick="addData(1)" title="Thêm nhập kho" class="btn btn-primary btn-add-local ms-5"><span class="material-symbols-outlined">add</span></a>
+                        <a onclick="saveLocalData(1)" title="Lưu nhập kho" class="btn btn-primary btn-save-local ms-3" style="display: none"><span class="material-symbols-outlined">save</span></a>
+                        <a onclick="cancelSaveLocalData(1)" title="Huỷ" class="btn btn-primary btn-save-local ms-1" style="display: none"><span class="material-symbols-outlined">close</span></a>
+                    @endif
+                </div>
             </div>
         </div>
         <div id="dataTable">

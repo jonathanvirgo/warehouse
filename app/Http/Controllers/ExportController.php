@@ -15,15 +15,18 @@ use Exception;
 
 class ExportController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request, $id = null){
         try {
+            $export     = collect([]);
             if(Auth::check()){
                 $search         = (object)[
                     'warehouse_id'  => $request->get('warehouse_id', 1)
                 ];
                 // $products   = ProductService::getAllDebt($search);
                 $products   = ProductService::getSearchProduct();
-                // dd($products);
+                if(!empty($id)){
+                    $export = Export::find($id);
+                }
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
                 $warehouses = Warehouse::all();
                 $discounts = Discount::all();
@@ -31,7 +34,8 @@ class ExportController extends Controller
                     'products',
                     'today',
                     'warehouses',
-                    'discounts'
+                    'discounts',
+                    'export'
                 ));
             }else{
                 $message = 'Liên kết không tồn tại';
@@ -115,21 +119,48 @@ class ExportController extends Controller
             if($request->has('arrExport') && Auth::check()){
                 $arrExport = json_decode($request->arrExport);
                 if(count($arrExport) > 0){
-                    foreach($arrExport as $item){
-                        $inputs = [
-                            "pro_id"        => $item->pro_id,
-                            "total"         => (int)$item->total,
-                            "price_import"  => (int)$item->price_import,
-                            "price_export"  => (int)$item->price_export,
-                            "report_date"   => date('Y-m-d', strtotime($item->report_date)),
-                            "discount"      => (int)$item->discount,
-                            "income"        => (int)$item->income,
-                            "note"          => $item->note,
-                            "created_by"    => $user->id,
-                            "warehouse_id"  => $item->warehouse_id,
-                            "type_discount" => $item->type_discount
-                        ];
-                        Export::create($inputs);
+                    if($request->has('id')){
+                        $export = Export::find($request->id);
+                        if($export){
+                            $item = $arrExport[0];
+                            $inputs = [
+                                "pro_id"        => $item->pro_id,
+                                "total"         => (int)$item->total,
+                                "price_import"  => (int)$item->price_import,
+                                "price_export"  => (int)$item->price_export,
+                                "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                "discount"      => (int)$item->discount,
+                                "income"        => (int)$item->income,
+                                "note"          => $item->note,
+                                "ship"          => (int)$item->ship,
+                                "discount_number" => (int)$item->discount_number,
+                                "warehouse_id"  => $item->warehouse_id,
+                                "type_discount" => $item->type_discount
+                            ];
+                            $export->update($inputs);
+                        }else{
+                            $result['status']  = false;
+                            $result['message'] = "Không tồn tại bản ghi";
+                        }
+                    }else{
+                        foreach($arrExport as $item){
+                            $inputs = [
+                                "pro_id"        => $item->pro_id,
+                                "total"         => (int)$item->total,
+                                "price_import"  => (int)$item->price_import,
+                                "price_export"  => (int)$item->price_export,
+                                "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                "discount"      => (int)$item->discount,
+                                "income"        => (int)$item->income,
+                                "note"          => $item->note,
+                                "created_by"    => $user->id,
+                                "ship"          => (int)$item->ship,
+                                "discount_number" => (int)$item->discount_number,
+                                "warehouse_id"  => $item->warehouse_id,
+                                "type_discount" => $item->type_discount
+                            ];
+                            Export::create($inputs);
+                        }
                     }
                 }else{
                     $result['status']  = false;

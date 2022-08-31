@@ -19,8 +19,9 @@ use DB;
 
 class PayController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request, $id = null){
         try {
+            $pay     = collect([]);
             if(Auth::check()){
                 $search         = (object)[
                     'warehouse_id'  => $request->get('warehouse_id', 1)
@@ -28,10 +29,14 @@ class PayController extends Controller
                 $products = ProductService::getAllDebt($search);
                 $warehouses = Warehouse::all();
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
+                if(!empty($id)){
+                    $pay = Pay::find($id);
+                }
                 return view('common.pay',compact(
                     'products',
                     'today',
-                    'warehouses'
+                    'warehouses',
+                    'pay'
                 ));
             }else{
                 $message = 'Liên kết không tồn tại';
@@ -52,24 +57,43 @@ class PayController extends Controller
             if($request->has('arrPay') && Auth::check()){
                 $arrPay = json_decode($request->arrPay);
                 if(count($arrPay) > 0){
-                    foreach($arrPay as $item){
-                        $inputs = [
-                            "pro_id"        => $item->pro_id,
-                            "total"         => (int)$item->total,
-                            "price"         => (int)$item->price,
-                            "report_date"   => date('Y-m-d', strtotime($item->report_date)),
-                            "note"          => $item->note,
-                            "warehouse_id"  => $item->warehouse_id,
-                            "created_by"    => $user->id
-                        ];
-                        if($item->id_debt > 0){
-                            $dept = Debt::find($item->id_debt);
-                            if($dept){
-                                $total = $dept->total - $inputs['total'];
-                                $dept->update(["total" => $total]);
-                            }
+                    if($request->has('id')){
+                        $pay = Pay::find($request->id);
+                        if($pay){
+                            $item = $arrPay[0];
+                            $inputs = [
+                                "pro_id"        => $item->pro_id,
+                                "total"         => (int)$item->total,
+                                "price"         => (int)$item->price,
+                                "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                "note"          => $item->note,
+                                "warehouse_id"  => $item->warehouse_id
+                            ];
+                            $pay->update($inputs);
+                        }else{
+                            $result['status']  = false;
+                            $result['message'] = "Không tồn tại bản ghi";
                         }
-                        Pay::create($inputs);
+                    }else{
+                        foreach($arrPay as $item){
+                            $inputs = [
+                                "pro_id"        => $item->pro_id,
+                                "total"         => (int)$item->total,
+                                "price"         => (int)$item->price,
+                                "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                "note"          => $item->note,
+                                "warehouse_id"  => $item->warehouse_id,
+                                "created_by"    => $user->id
+                            ];
+                            if($item->id_debt > 0){
+                                $dept = Debt::find($item->id_debt);
+                                if($dept){
+                                    $total = $dept->total - $inputs['total'];
+                                    $dept->update(["total" => $total]);
+                                }
+                            }
+                            Pay::create($inputs);
+                        }
                     }
                 }else{
                     $result['status']  = false;
