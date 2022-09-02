@@ -49,6 +49,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('product/list', 'ProductController@list');
     Route::get('product/price', 'ProductController@getPrice');
     Route::get('product/inventory', 'ProductController@getInventory');
+
+    Route::get('user/profile', 'UserController@index');
+    Route::post('user/store', 'UserController@store');
 });
 
 Route::group(['prefix' => 'admin'], function () {

@@ -163,6 +163,11 @@ class ImportController extends Controller
                 $imports        = ImportService::getAllImport($search);
                 $warehouses     = Warehouse::all();
                 $totalPrice     = 0;
+                if($user->role_id == 4){
+                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->get();
+                }else{
+                    $warehouses     = Warehouse::all();
+                }
                 foreach($imports as $item){
                     $totalPrice += $item['price'] * $item['total'];
                 }

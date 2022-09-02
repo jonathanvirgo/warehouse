@@ -22,11 +22,7 @@ class ProductController extends Controller
                 ];
                 $orders_by = [
                     ['id' => 'id|asc',        'name' => 'Ngày tạo tăng dần'],
-                    ['id' => 'id|desc',       'name' => 'Ngày tạo giảm dần'],
-                    ['id' => 'price|asc',     'name' => 'Giá tăng dần'],
-                    ['id' => 'price|desc',    'name' => 'Giá giảm dần'],
-                    ['id' => 'total|asc',     'name' => 'Số lượng tăng dần'],
-                    ['id' => 'total|desc',     'name' => 'Số lượng giảm dần']
+                    ['id' => 'id|desc',       'name' => 'Ngày tạo giảm dần']
                 ];
                 $productSearch  = ProductService::getSearchProduct();
                 $products       = ProductService::getAllProduct($search);

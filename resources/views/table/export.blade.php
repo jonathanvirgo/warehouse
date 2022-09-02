@@ -193,5 +193,12 @@
     $('#list_discount').on('select2:select', function (e) {
       $("#search_form").submit();
     });
+
+    $(document).ready(function(){
+      @if(Auth::user()->role_id == 5)
+        $('#list_warehouse').prop("disabled", true);
+        $('#list_discount').prop("disabled", true);
+      @endif
+    });
 </script>
 @stop

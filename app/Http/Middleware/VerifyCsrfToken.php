@@ -16,6 +16,7 @@ class VerifyCsrfToken extends Middleware
         '/import/store',
         '/pay/store',
         '/export/store',
-        '/import/delete'
+        '/import/delete',
+        'user/store'
     ];
 }

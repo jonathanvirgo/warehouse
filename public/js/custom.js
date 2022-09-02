@@ -528,6 +528,13 @@ function save(type, id = ''){
                             url = "/pay/store";
                             data = {"arrPay" : JSON.stringify(arrData)};
                             break;
+                        case 4:
+                            let id = $('#list_user').val();
+                            let warehouse_id = $('#list_warehouse').val();
+                            let campain_id = $('#list_campain').val();
+                            url = "/user/store";
+                            data = {'id': id, 'warehouse_id': warehouse_id, 'campain_id': campain_id};
+                            break;
                         default: break;
                     }
                     if(id){
@@ -793,4 +800,16 @@ function saveEdit(id, type){
         default: break;
     }
     save(type, id);
+}
+
+function saveProfile(){
+    if(!$('#list_user').val() || $('#list_user').val() == 0){
+        displayError("Bạn chưa chọn user!");
+        return false;
+    }
+    if(!$('#list_campain').val() || $('#list_campain').val() == 0){
+        displayError("Bạn chưa chọn campain!");
+        return false;
+    }
+    save(4);
 }

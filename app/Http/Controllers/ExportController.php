@@ -58,7 +58,7 @@ class ExportController extends Controller
                     'order_by'    => $request->get('order_by','id|desc'),
                     'pro_id'      => $request->get('pro_id', 0),
                     'warehouse_id'  => $request->get('warehouse_id', 1),
-                    'type_discount' => $request->get('type_discount', 3)
+                    'type_discount' => $request->get('type_discount', 1)
                 ];
                 if ($search->reportdate) {
                     $time     = explode(' - ', trim($search->reportdate), 2);

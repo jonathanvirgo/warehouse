@@ -51,7 +51,7 @@
               <img src="{{ Voyager::image( Auth::user()->avatar ) }}" class="avatar" alt="Avatar"> {{Auth::user()->name}} <b class="caret"></b>
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdown03" data-bs-popper="none">
-              <a href="#" class="dropdown-item"><i class="fa fa-user-o"></i> Profile</a>
+              <a href="{{ url('/user/profile') }}" class="dropdown-item"><i class="fa fa-user-o"></i> Profile</a>
               <a href="#" class="dropdown-item"><i class="fa fa-calendar-o"></i> Calendar</a>
               <a href="#" class="dropdown-item"><i class="fa fa-sliders"></i> Settings</a>
               <div class="dropdown-divider"></div>

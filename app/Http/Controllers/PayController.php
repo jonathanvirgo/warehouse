@@ -142,7 +142,11 @@ class PayController extends Controller
 
                 $products   = ProductService::getSearchProductPay($search);
                 $pays       = PayService::getAllPay($search);
-                $warehouses = Warehouse::all();
+                if($user->role_id == 4){
+                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->get();
+                }else{
+                    $warehouses     = Warehouse::all();
+                }
                 $totalPrice = 0;
                 foreach($pays as $item){
                     $totalPrice += $item['price'] * $item['total'];
@@ -197,7 +201,11 @@ class PayController extends Controller
                 ];
                 $products   = ProductService::getSearchProductDept($search);
                 $depts      = PayService::getAllDept($search);
-                $warehouses = Warehouse::all();
+                if($user->role_id == 4){
+                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->get();
+                }else{
+                    $warehouses     = Warehouse::all();
+                }
                 $totalPrice = 0;
                 foreach($depts as $item){
                     $totalPrice += $item['price'] * $item['total'];
