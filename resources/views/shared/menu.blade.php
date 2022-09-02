@@ -21,10 +21,12 @@
           <a class="nav-link {{ request()->path() === 'admin' ? 'active' : '' }}" href="{{ url('/admin') }}">Admin</a>
         </li>
         @endif
-
+        @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
         <li class="nav-item">
           <a class="nav-link nav-hide {{ request()->path() === 'product/list' ? 'active' : '' }}" href="{{ url('/product/list') }}">Sản phẩm</a>
         </li>
+        @endif
+        @if(in_array(Auth::user()->role_id, [1,2,3,4]))
         <li class="nav-item">
           <a class="nav-link nav-hide {{ request()->path() === 'dept/list' ? 'active' : '' }}" href="{{ url('/dept/list') }}">Công nợ</a>
         </li>
@@ -35,11 +37,14 @@
           <a class="nav-link nav-hide {{ request()->path() === 'pay/list' ? 'active' : '' }}" href="{{ url('/pay/list') }}">Danh sách thanh toán</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link nav-hide {{ request()->path() === 'export/list' ? 'active' : '' }}" href="{{ url('/export/list') }}">Danh sách xuất kho</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link nav-hide {{ request()->path() === 'dept/list-day' ? 'active' : '' }}" href="{{ url('/dept/list-day') }}">Công nợ theo ngày</a>
         </li>
+        @endif
+        @if(in_array(Auth::user()->role_id, [1,2,5]))
+        <li class="nav-item">
+          <a class="nav-link nav-hide {{ request()->path() === 'export/list' ? 'active' : '' }}" href="{{ url('/export/list') }}">Danh sách xuất kho</a>
+        </li>
+        @endif
       </ul>
       <div class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-bs-toggle="dropdown" aria-expanded="true">

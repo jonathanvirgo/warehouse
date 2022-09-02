@@ -84,12 +84,16 @@
         <tr>
           <th scope="col">Sản phẩm</th>
           <th scope="col">Số lượng</th>
+          @if(in_array(Auth::user()->role_id, [1,2]))
           <th scope="col">Giá nhập</th>
+          @endif
           <th scope="col">Giá xuất</th>
           <th scope="col">Chiếu khấu</th>
           <th scope="col">Tổng chiếu khấu</th>
+          @if(in_array(Auth::user()->role_id, [1,2]))
           <th scope="col">Doanh thu</th>
           <th scope="col">Tổng doanh thu</th>
+          @endif
           <th scope="col">Ghi chú</th>
           <th scope="col">Ngày nhập</th>
           @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
@@ -102,12 +106,16 @@
           <tr>
             <td>{{$item->product->name}}</td>
             <td>{{$item['total']}}</td>
+            @if(in_array(Auth::user()->role_id, [1,2]))
             <td>{{number_format($item['price_import'])}}</td>
+            @endif
             <td>{{number_format($item['price_export'])}}</td>
             <td>{{number_format($item['discount'])}}</td>
             <td>{{number_format($item['discount'] * $item['total'])}}</td>
+            @if(in_array(Auth::user()->role_id, [1,2]))
             <td>{{number_format($item['income'])}}</td>
             <td>{{number_format($item['income'] * $item['total'])}}</td>
+            @endif
             <td>{{$item['note']}}</td>
             <td>{{date('d/m/Y', strtotime($item->report_date))}}</td>
             @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
@@ -119,10 +127,16 @@
           </tr>
           @endforeach
           <tr>
-            <th colspan="3">Tổng số</th>
-            <th colspan="2">{{number_format($totalPriceExport)}}</th>
+            @if(in_array(Auth::user()->role_id, [1,2]))
+            <th colspan="5">Tổng số</th>
             <th colspan="2">{{number_format($totalDiscount)}}</th>
-            <th colspan="2">{{number_format($totalIncome)}}</th>
+            @else
+            <th colspan="4">Tổng số</th>
+            <th colspan="3">{{number_format($totalDiscount)}}</th>3
+            @endif
+            @if(in_array(Auth::user()->role_id, [1,2]))
+            <th colspan="4">{{number_format($totalIncome)}}</th>
+            @endif
           </tr>
       </tbody>
     </table>

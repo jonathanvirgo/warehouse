@@ -7,12 +7,15 @@
                     Dashboard
                 </a>
             </li> -->
+            @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
             <li class="nav-item">
                 <a class="nav-link {{ request()->path() === 'product/list' ? 'active' : '' }}" href="{{ url('/product/list') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file" aria-hidden="true"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
                     Sản phẩm
                 </a>
             </li>
+            @endif
+            @if(in_array(Auth::user()->role_id, [1,2,3,4]))
             <li class="nav-item">
                 <a class="nav-link {{ request()->path() === 'dept/list' ? 'active' : '' }}" href="{{ url('/dept/list') }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-cart" aria-hidden="true"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
@@ -32,12 +35,15 @@
                     Danh sách thanh toán
                 </a>
             </li>
+            @endif
+            @if(in_array(Auth::user()->role_id, [1,2,5]))
             <li class="nav-item">
                 <a class="nav-link {{ request()->path() === 'export/list' ? 'active' : '' }}" href="{{ url('/export/list') }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers" aria-hidden="true"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
                     Danh sách xuất kho
                 </a>
             </li>
+            @endif
             <!-- <li class="nav-item">
                 <a class="nav-link" href="#">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
@@ -51,7 +57,7 @@
                 </a>
             </li> -->
         </ul>
-
+        @if(in_array(Auth::user()->role_id, [1,2,3,4]))
         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
             <span>Saved reports</span>
             <!-- <a class="link-secondary" href="#" aria-label="Add a new report"> -->
@@ -84,5 +90,6 @@
                 </a>
             </li> -->
         </ul>
+        @endif
     </div>
 </nav>

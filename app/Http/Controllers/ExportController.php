@@ -81,11 +81,11 @@ class ExportController extends Controller
                 $discounts      = Discount::all();
                 $totalDiscount  = 0;
                 $totalIncome    = 0;
-                $totalPriceExport = 0;
+                // $totalPriceExport = 0;
                 foreach($exports as $item){
                     $totalDiscount  += $item['discount'] * $item['total'];
                     $totalIncome    += $item['income'] * $item['total'];
-                    $totalPriceExport += $item['price_export'] * $item['total'];
+                    // $totalPriceExport += $item['price_export'] * $item['total'];
                 }
                 return view('table.export',compact(
                     'exports',
@@ -97,7 +97,7 @@ class ExportController extends Controller
                     'totalDiscount',
                     'totalIncome',
                     'warehouses',
-                    'totalPriceExport',
+                    // 'totalPriceExport',
                     'discounts'
                 ));
             }else{
