@@ -76,7 +76,7 @@ class ProductController extends Controller
                 $inputs = (object)[
                     "warehouse_id"  => (int)$request->warehouse_id
                 ];
-                $data = ProductService::getAllDebt($inputs, $user);
+                $data = ProductService::getAllDebt($inputs);
                 $result['data'] = $data;
             }else{
                 $result['status'] = false;

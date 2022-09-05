@@ -23,7 +23,6 @@ class ExportController extends Controller
                 $search         = (object)[
                     'warehouse_id'  => $request->get('warehouse_id', 1)
                 ];
-                // $products   = ProductService::getAllDebt($search);
                 $products   = ProductService::getSearchProduct($user);
                 if(!empty($id)){
                     $export = Export::find($id);
@@ -77,7 +76,7 @@ class ExportController extends Controller
                     ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần']
                 ];
                 $products       = ProductService::getSearchProductExport($user);
-                $exports        = ExportService::getAllExport($search, $user);
+                $exports        = ExportService::getAllExport($search);
                 $warehouses     = Warehouse::where('campain_id',$user->campain_id)->get();
                 $discounts      = Discount::where('campain_id',$user->campain_id)->get();
                 $totalDiscount  = 0;

@@ -12,9 +12,9 @@ use DB;
 
 class PayService
 {
-    public static function getAllPay($search, $user){
+    public static function getAllPay($search){
         try {
-            $query = Pay::where('campain_id', $user->campain_id)->with('product');
+            $query = Pay::with('product');
             if ($search->reportdate) {
                 $time = explode(' - ', trim($search->reportdate), 2);
                 if ($time[0] == $time[1]) {
@@ -44,9 +44,9 @@ class PayService
         }
     }
 
-    public static function getAllDept($search, $user){
+    public static function getAllDept($search){
         try {
-            $query = Debt::where('total','>',0)->where('campain_id',$user->campain_id)->with('product');
+            $query = Debt::where('total','>',0)->with('product');
 
             if($search->warehouse_id){
                 $query->where("warehouse_id", $search->warehouse_id);

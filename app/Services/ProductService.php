@@ -33,9 +33,9 @@ class ProductService
         }
     }
 
-    public static function getAllDebt($search, $user){
+    public static function getAllDebt($search){
         try {
-            $products = Debt::where('campain_id',$user->campain_id)->where('warehouse_id', $search->warehouse_id)->where('total','>',0)->with('product')->get();
+            $products = Debt::where('warehouse_id', $search->warehouse_id)->where('total','>',0)->with('product')->get();
             // dd($products);
             return $products;
         } catch (Exception $e) {
@@ -52,18 +52,18 @@ class ProductService
         }
     }
 
-    public static function getSearchProductDept($search, $user){
+    public static function getSearchProductDept($search){
         try {
-            $products = Debt::select("pro_id")->where('campain_id',$user->campain_id)->where('warehouse_id', $search->warehouse_id)->distinct()->where('total','>',0)->with('product')->get();
+            $products = Debt::select("pro_id")->where('warehouse_id', $search->warehouse_id)->distinct()->where('total','>',0)->with('product')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getSearchProductDept-catch', $e->getMessage());
         }
     }
 
-    public static function getSearchProductPay($search, $user){
+    public static function getSearchProductPay($search){
         try {
-            $products = Pay::select("pro_id")->where('campain_id',$user->campain_id)->where('warehouse_id', $search->warehouse_id)->distinct()->with('product')->get();
+            $products = Pay::select("pro_id")->where('warehouse_id', $search->warehouse_id)->distinct()->with('product')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getSearchProductPay-catch', $e->getMessage());

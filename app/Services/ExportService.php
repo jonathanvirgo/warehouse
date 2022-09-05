@@ -9,9 +9,9 @@ use Exception;
 
 class ExportService
 {
-    public static function getAllExport($search, $user){
+    public static function getAllExport($search){
         try {
-            $query = Export::where('campain_id',$user->campain_id)->with('product');
+            $query = Export::with('product');
             
             if($search->warehouse_id){
                 $query->where("warehouse_id", $search->warehouse_id);

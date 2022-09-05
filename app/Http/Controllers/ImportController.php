@@ -58,7 +58,7 @@ class ImportController extends Controller
                         $import = Import::find($request->id);
                         if($import){
                             $item = $arrImport[0];
-                            $debt = Debt::where("pro_id", $import->pro_id)->where('warehouse_id',$import->warehouse_id)->where('campain_id',$user->campain_id)->where("price", $import->price)->first();
+                            $debt = Debt::where("pro_id", $import->pro_id)->where('warehouse_id',$import->warehouse_id)->where("price", $import->price)->first();
                             $changeTotal = $item->total - $import->total;
                             //Không trống công nợ
                             if(!empty($debt)){
@@ -107,7 +107,7 @@ class ImportController extends Controller
                             ];
                             Import::create($inputs);
                             if($item->paied == false){
-                                $dept = Debt::where("pro_id", $item->pro_id)->where('campain_id',$user->campain_id)->where("price", (int)$item->price)->where("warehouse_id", $item->warehouse_id)->first();
+                                $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price)->where("warehouse_id", $item->warehouse_id)->first();
                                 if($dept){
                                     $total = $dept->total + $inputs['total'];
                                     $dept->update(["total" => $total]);
@@ -162,10 +162,10 @@ class ImportController extends Controller
                     ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
                 ];
                 $products       = ProductService::getSearchProductImport($user);
-                $imports        = ImportService::getAllImport($search, $user);
+                $imports        = ImportService::getAllImport($search);
                 $totalPrice     = 0;
                 if($user->role_id == 4){
-                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->where('campain_id',$user->campain_id)->get();
+                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->get();
                 }else{
                     $warehouses = Warehouse::where('campain_id',$user->campain_id)->get();
                 }

@@ -11,9 +11,9 @@ use Exception;
 
 class ImportService
 {
-    public static function getAllImport($search, $user){
+    public static function getAllImport($search){
         try {
-            $query = Import::where('campain_id',$user->campain_id)->with('product');
+            $query = Import::with('product');
             if($search->warehouse_id){
                 $query->where("warehouse_id", $search->warehouse_id);
             }
