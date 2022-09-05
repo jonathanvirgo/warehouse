@@ -42,7 +42,7 @@ class UserController extends Controller
 
     public function store(Request $request){
         $user   = Auth::user();
-        $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/dashboard');
+        $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/user/profile');
         try {
             if(Auth::check() && $user->role_id == 1){
                 if($request->has('id')){

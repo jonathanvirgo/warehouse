@@ -17,6 +17,7 @@ class Pay extends Model{
         'created_by',
         'warehouse_id',
         'brand_id',
+        'campain_id',
         'created_at',
         'updated_at'
     ];

@@ -10,6 +10,7 @@ class Product extends Model{
     protected $fillable = [
         'name',
         'brand_id',
+        'campain_id',
         'created_at',
         'updated_at'
     ];

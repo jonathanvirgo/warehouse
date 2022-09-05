@@ -14,13 +14,12 @@ use Exception;
 
 class ProductService
 {
-    public static function getAllProduct($search){
+    public static function getAllProduct($search, $user){
         try {
-            $query = Product::with('brand');
+            $query = Product::where('campain_id', $user->campain_id)->with('brand');
             
             if((int)$search->pro_id !== 0){
                 $query->where("id", $search->pro_id);
-                
             }
             
             if($search->order_by){
@@ -34,9 +33,9 @@ class ProductService
         }
     }
 
-    public static function getAllDebt($search){
+    public static function getAllDebt($search, $user){
         try {
-            $products = Debt::where('warehouse_id', $search->warehouse_id)->where('total','>',0)->with('product')->get();
+            $products = Debt::where('campain_id',$user->campain_id)->where('warehouse_id', $search->warehouse_id)->where('total','>',0)->with('product')->get();
             // dd($products);
             return $products;
         } catch (Exception $e) {
@@ -44,45 +43,45 @@ class ProductService
         }
     }
 
-    public static function getSearchProduct(){
+    public static function getSearchProduct($user){
         try {
-            $products = Product::with('brand')->get();
+            $products = Product::where('campain_id',$user->campain_id)->with('brand')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getSearchProduct-catch', $e->getMessage());
         }
     }
 
-    public static function getSearchProductDept($search){
+    public static function getSearchProductDept($search, $user){
         try {
-            $products = Debt::select("pro_id")->where('warehouse_id', $search->warehouse_id)->distinct()->where('total','>',0)->with('product')->get();
+            $products = Debt::select("pro_id")->where('campain_id',$user->campain_id)->where('warehouse_id', $search->warehouse_id)->distinct()->where('total','>',0)->with('product')->get();
+            return $products;
+        } catch (Exception $e) {
+            LogActivityService::addToLog('getSearchProductDept-catch', $e->getMessage());
+        }
+    }
+
+    public static function getSearchProductPay($search, $user){
+        try {
+            $products = Pay::select("pro_id")->where('campain_id',$user->campain_id)->where('warehouse_id', $search->warehouse_id)->distinct()->with('product')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getSearchProductPay-catch', $e->getMessage());
         }
     }
 
-    public static function getSearchProductPay($search){
+    public static function getSearchProductImport($user){
         try {
-            $products = Pay::select("pro_id")->where('warehouse_id', $search->warehouse_id)->distinct()->with('product')->get();
-            return $products;
-        } catch (Exception $e) {
-            LogActivityService::addToLog('getSearchProductPay-catch', $e->getMessage());
-        }
-    }
-
-    public static function getSearchProductImport(){
-        try {
-            $products = Import::select("pro_id")->distinct()->with('product')->get();
+            $products = Import::select("pro_id")->where('campain_id',$user->campain_id)->distinct()->with('product')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getSearchProductImport-catch', $e->getMessage());
         }
     }
 
-    public static function getSearchProductExport(){
+    public static function getSearchProductExport($user){
         try {
-            $products = Export::select("pro_id")->distinct()->with('product')->get();
+            $products = Export::select("pro_id")->where('campain_id',$user->campain_id)->distinct()->with('product')->get();
             return $products;
         } catch (Exception $e) {
             LogActivityService::addToLog('getSearchProductImport-catch', $e->getMessage());

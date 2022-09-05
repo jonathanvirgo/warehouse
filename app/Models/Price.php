@@ -12,6 +12,7 @@ class Price extends Model{
         'price',
         'warehouse_id',
         'im_export',
+        'campain_id',
         'created_at',
         'updated_at'
     ];

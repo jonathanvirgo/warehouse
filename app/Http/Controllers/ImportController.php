@@ -22,9 +22,10 @@ class ImportController extends Controller
         $import     = collect([]);
         try {
             if(Auth::check()){
-                $products   = ProductService::getSearchProduct();
+                $user       = Auth::user();
+                $products   = ProductService::getSearchProduct($user);
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
-                $warehouses = Warehouse::all();
+                $warehouses = Warehouse::where('campain_id',$user->campain_id)->get();
                 if(!empty($id)){
                     $import = Import::find($id);
                 }
@@ -46,18 +47,18 @@ class ImportController extends Controller
     }
 
     public function store(Request $request){
-        $user   = Auth::user();
         $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/import/list');
 
         try {
             if($request->has('arrImport') && Auth::check()){
+                $user   = Auth::user();
                 $arrImport = json_decode($request->arrImport);
                 if(count($arrImport) > 0){
                     if($request->has('id')){
                         $import = Import::find($request->id);
                         if($import){
                             $item = $arrImport[0];
-                            $debt = Debt::where("pro_id", $import->pro_id)->where("price", $import->price)->first();
+                            $debt = Debt::where("pro_id", $import->pro_id)->where('warehouse_id',$import->warehouse_id)->where('campain_id',$user->campain_id)->where("price", $import->price)->first();
                             $changeTotal = $item->total - $import->total;
                             //Không trống công nợ
                             if(!empty($debt)){
@@ -101,11 +102,12 @@ class ImportController extends Controller
                                 "report_date"   => date('Y-m-d', strtotime($item->report_date)),
                                 "note"          => $item->note,
                                 "created_by"    => $user->id,
-                                "warehouse_id"  => $item->warehouse_id
+                                "warehouse_id"  => $item->warehouse_id,
+                                "campain_id"    => $user->campain_id
                             ];
                             Import::create($inputs);
                             if($item->paied == false){
-                                $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price)->where("warehouse_id", $item->warehouse_id)->first();
+                                $dept = Debt::where("pro_id", $item->pro_id)->where('campain_id',$user->campain_id)->where("price", (int)$item->price)->where("warehouse_id", $item->warehouse_id)->first();
                                 if($dept){
                                     $total = $dept->total + $inputs['total'];
                                     $dept->update(["total" => $total]);
@@ -133,9 +135,9 @@ class ImportController extends Controller
     }
 
     public function list(Request $request){
-        $user       = Auth::user();
         try {
             if(Auth::check()){
+                $user       = Auth::user();
                 $fromdate       = Carbon::now()->addDays(-30)->format('d-m-Y');
                 $todate         = Carbon::now()->addDays(30)->format('d-m-Y');
                 $search         = (object)[
@@ -159,14 +161,13 @@ class ImportController extends Controller
                     ['id' => 'report_date|asc', 'name' => 'Ngày nhập tăng dần'],
                     ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
                 ];
-                $products       = ProductService::getSearchProductImport();
-                $imports        = ImportService::getAllImport($search);
-                $warehouses     = Warehouse::all();
+                $products       = ProductService::getSearchProductImport($user);
+                $imports        = ImportService::getAllImport($search, $user);
                 $totalPrice     = 0;
                 if($user->role_id == 4){
-                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->get();
+                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->where('campain_id',$user->campain_id)->get();
                 }else{
-                    $warehouses     = Warehouse::all();
+                    $warehouses = Warehouse::where('campain_id',$user->campain_id)->get();
                 }
                 foreach($imports as $item){
                     $totalPrice += $item['price'] * $item['total'];

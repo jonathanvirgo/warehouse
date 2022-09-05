@@ -18,18 +18,19 @@ class ExportController extends Controller
     public function index(Request $request, $id = null){
         try {
             $export     = collect([]);
+            $user = Auth::user();
             if(Auth::check()){
                 $search         = (object)[
                     'warehouse_id'  => $request->get('warehouse_id', 1)
                 ];
                 // $products   = ProductService::getAllDebt($search);
-                $products   = ProductService::getSearchProduct();
+                $products   = ProductService::getSearchProduct($user);
                 if(!empty($id)){
                     $export = Export::find($id);
                 }
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
-                $warehouses = Warehouse::all();
-                $discounts = Discount::all();
+                $warehouses = Warehouse::where('campain_id',$user->campain_id)->get();
+                $discounts = Discount::where('campain_id',$user->campain_id)->get();
                 return view('common.export',compact(
                     'products',
                     'today',
@@ -48,9 +49,9 @@ class ExportController extends Controller
     }
 
     public function list(Request $request){
-        $user       = Auth::user();
         try {
             if(Auth::check()){
+                $user           = Auth::user();
                 $fromdate       = Carbon::now()->addDays(-30)->format('d-m-Y');
                 $todate         = Carbon::now()->addDays(30)->format('d-m-Y');
                 $search         = (object)[
@@ -75,10 +76,10 @@ class ExportController extends Controller
                     ['id' => 'report_date|asc', 'name' => 'Ngày nhập tăng dần'],
                     ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần']
                 ];
-                $products       = ProductService::getSearchProductExport();
-                $exports        = ExportService::getAllExport($search);
-                $warehouses     = Warehouse::all();
-                $discounts      = Discount::all();
+                $products       = ProductService::getSearchProductExport($user);
+                $exports        = ExportService::getAllExport($search, $user);
+                $warehouses     = Warehouse::where('campain_id',$user->campain_id)->get();
+                $discounts      = Discount::where('campain_id',$user->campain_id)->get();
                 $totalDiscount  = 0;
                 $totalIncome    = 0;
                 // $totalPriceExport = 0;
@@ -112,10 +113,10 @@ class ExportController extends Controller
     }
 
     public function store(Request $request){
-        $user   = Auth::user();
         $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/export/list');
 
         try {
+            $user   = Auth::user();
             if($request->has('arrExport') && Auth::check()){
                 $arrExport = json_decode($request->arrExport);
                 if(count($arrExport) > 0){
@@ -157,7 +158,8 @@ class ExportController extends Controller
                                 "ship"          => (int)$item->ship,
                                 "discount_number" => (int)$item->discount_number,
                                 "warehouse_id"  => $item->warehouse_id,
-                                "type_discount" => $item->type_discount
+                                "type_discount" => $item->type_discount,
+                                "campain_id"    => $user->campain_id
                             ];
                             Export::create($inputs);
                         }

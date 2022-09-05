@@ -23,11 +23,12 @@ class PayController extends Controller
         try {
             $pay     = collect([]);
             if(Auth::check()){
+                $user           = Auth::user();
                 $search         = (object)[
                     'warehouse_id'  => $request->get('warehouse_id', 1)
                 ];
-                $products = ProductService::getAllDebt($search);
-                $warehouses = Warehouse::all();
+                $products   = ProductService::getAllDebt($search, $user);
+                $warehouses = Warehouse::where('campain_id',$user->campain_id)->get();
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
                 if(!empty($id)){
                     $pay = Pay::find($id);
@@ -50,18 +51,18 @@ class PayController extends Controller
     }
 
     public function store(Request $request){
-        $user   = Auth::user();
         $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/pay/list');
 
         try {
             if($request->has('arrPay') && Auth::check()){
+                $user   = Auth::user();
                 $arrPay = json_decode($request->arrPay);
                 if(count($arrPay) > 0){
                     if($request->has('id')){
                         $pay = Pay::find($request->id);
                         if($pay){
                             $item = $arrPay[0];
-                            $debt = Debt::where("pro_id", $pay->pro_id)->where("price", $pay->price)->first();
+                            $debt = Debt::where("pro_id", $pay->pro_id)->where("price", $pay->price)->where('warehouse_id',$pay->warehouse_id)->where('campain_id',$user->campain_id)->first();
                             $changeTotal = $pay->total - $item->total;
                             //Không trống công nợ
                             if(!empty($debt)){
@@ -94,7 +95,8 @@ class PayController extends Controller
                                 "report_date"   => date('Y-m-d', strtotime($item->report_date)),
                                 "note"          => $item->note,
                                 "warehouse_id"  => $item->warehouse_id,
-                                "created_by"    => $user->id
+                                "created_by"    => $user->id,
+                                "campain_id"    => $user->campain_id
                             ];
                             if($item->id_debt > 0){
                                 $dept = Debt::find($item->id_debt);
@@ -124,9 +126,9 @@ class PayController extends Controller
     }
 
     public function list(Request $request){
-        $user       = Auth::user();
         try {
             if(Auth::check()){
+                $user       = Auth::user();
                 $fromdate       = Carbon::now()->addDays(-30)->format('d-m-Y');
                 $todate         = Carbon::now()->addDays(60)->format('d-m-Y');
                 $search         = (object)[
@@ -151,12 +153,12 @@ class PayController extends Controller
                     ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
                 ];
 
-                $products   = ProductService::getSearchProductPay($search);
-                $pays       = PayService::getAllPay($search);
+                $products   = ProductService::getSearchProductPay($search, $user);
+                $pays       = PayService::getAllPay($search, $user);
                 if($user->role_id == 4){
-                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->get();
+                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->where('campain_id',$user->campain_id)->get();
                 }else{
-                    $warehouses     = Warehouse::all();
+                    $warehouses = Warehouse::where('campain_id',$user->campain_id)->get();
                 }
                 $totalPrice = 0;
                 foreach($pays as $item){
@@ -210,12 +212,12 @@ class PayController extends Controller
                     // ['id' => 'report_date|asc', 'name' => 'Ngày nhập tăng dần'],
                     // ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
                 ];
-                $products   = ProductService::getSearchProductDept($search);
-                $depts      = PayService::getAllDept($search);
+                $products   = ProductService::getSearchProductDept($search, $user);
+                $depts      = PayService::getAllDept($search, $user);
                 if($user->role_id == 4){
-                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->get();
+                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->where('campain_id',$user->campain_id)->get();
                 }else{
-                    $warehouses     = Warehouse::all();
+                    $warehouses = Warehouse::where('campain_id',$user->campain_id)->get();
                 }
                 $totalPrice = 0;
                 foreach($depts as $item){
@@ -251,13 +253,13 @@ class PayController extends Controller
                 // $imports    = ImportService::getImportFollowDay($search);
                 // $pays       = PayService::getPayFollowDay($search);
 
-                $sql = "SELECT import.pro_id,import.price,import.total_import,pay.total_pay,(import.total_import - pay.total_pay) AS total FROM (SELECT SUM(total) AS total_import, pro_id, price FROM imports WHERE warehouse_id = ".$search->warehouse_id." AND DATE(report_date) <= '". date('Y-m-d', strtotime($search->day)) ."' GROUP BY pro_id, price) AS `import` LEFT JOIN (SELECT SUM(total) AS total_pay, pro_id, price FROM pay WHERE warehouse_id = ".$search->warehouse_id." AND DATE(report_date) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS pay ON import.pro_id = pay.pro_id";
-                $sql = "SELECT * FROM (SELECT import.pro_id,import.price,import.total_import,pay.total_pay FROM (SELECT SUM(total) AS total_import, pro_id, price FROM imports WHERE `warehouse_id` = ".$search->warehouse_id." AND DATE(`report_date`) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS `import` LEFT JOIN (SELECT SUM(total) AS total_pay, pro_id, price FROM pay WHERE `warehouse_id` = ".$search->warehouse_id." AND DATE(`report_date`) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS pay ON import.`pro_id` = pay.pro_id) AS `total` INNER JOIN products ON products.id = total.pro_id";
+                // $sql = "SELECT import.pro_id,import.price,import.total_import,pay.total_pay,(import.total_import - pay.total_pay) AS total FROM (SELECT SUM(total) AS total_import, pro_id, price FROM imports WHERE warehouse_id = ".$search->warehouse_id." AND DATE(report_date) <= '". date('Y-m-d', strtotime($search->day)) ."' GROUP BY pro_id, price) AS `import` LEFT JOIN (SELECT SUM(total) AS total_pay, pro_id, price FROM pay WHERE warehouse_id = ".$search->warehouse_id." AND DATE(report_date) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS pay ON import.pro_id = pay.pro_id";
+                $sql = "SELECT * FROM (SELECT import.pro_id,import.price,import.total_import,pay.total_pay FROM (SELECT SUM(total) AS total_import, pro_id, price FROM imports WHERE `warehouse_id` = ".$search->warehouse_id." AND DATE(`report_date`) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS `import` LEFT JOIN (SELECT SUM(total) AS total_pay, pro_id, price FROM pay WHERE `warehouse_id` = ".$search->warehouse_id." AND DATE(`report_date`) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS pay ON import.`pro_id` = pay.pro_id AND import.`price` = pay.price) AS `total` INNER JOIN products ON products.id = total.pro_id";
                 $data = DB::select($sql);
                 if($user->role_id == 4){
-                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->get();
+                    $warehouses     = Warehouse::where('id', $user->warehouse_id)->where('campain_id',$user->campain_id)->get();
                 }else{
-                    $warehouses     = Warehouse::all();
+                    $warehouses = Warehouse::where('campain_id',$user->campain_id)->get();
                 }
                 $totalImports   = 0;
                 $totalPay       = 0;

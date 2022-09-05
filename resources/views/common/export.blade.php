@@ -163,7 +163,7 @@
             let pro_id   = $('#list_product').val();
             getPrice(pro_id, e.params.data.id, 'xuat');
             setPriceAttr(pro_id,e.params.data.id, 'nhap');
-            getInventory(e.params.data.id);
+            // getInventory(e.params.data.id);
             $('#price').val('');
             $('input[id="total"]').val('');
         });

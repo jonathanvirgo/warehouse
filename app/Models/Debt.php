@@ -16,6 +16,7 @@ class Debt extends Model{
         'created_by',
         'brand_id',
         'warehouse_id',
+        'campain_id',
         'created_at',
         'updated_at'
     ];
