@@ -61,6 +61,17 @@ class PayController extends Controller
                         $pay = Pay::find($request->id);
                         if($pay){
                             $item = $arrPay[0];
+                            $debt = Debt::where("pro_id", $pay->pro_id)->where("price", $pay->price)->first();
+                            $changeTotal = $pay->total - $item->total;
+                            //Không trống công nợ
+                            if(!empty($debt)){
+                                // Giảm số lượng
+                                $debt->update(["total" => ($debt->total + $changeTotal)]);
+                            }else{
+                                $result['status'] = false;
+                                $result['message'] = "Đã thanh toán hết số lượng sản phẩm";
+                                return response()->json($result, 200);
+                            }
                             $inputs = [
                                 "pro_id"        => $item->pro_id,
                                 "total"         => (int)$item->total,
