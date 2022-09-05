@@ -116,6 +116,8 @@
     let arrImport = [];
     let totalArr = 0;
     let idEdit;
+    let idArr       = 0;
+    
     $('#list_product').on('select2:select', function (e) {
         let warehouse   = $('#list_warehouse').val();
         getPrice(e.params.data.id, warehouse, 'nhap');

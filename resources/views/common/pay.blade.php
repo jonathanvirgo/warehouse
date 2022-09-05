@@ -116,6 +116,8 @@
         var arrProduct  = [];
         let arrData      = [];
         let totalArr    = 0;
+        let idArr       = 0;
+        
         $('#list_product').on('select2:select', function (e) {
             let price = $('#list_product option:selected').data('price');
             $('#price').val(price);

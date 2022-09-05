@@ -150,6 +150,7 @@
         let arrData     = [];
         var arrProduct  = [];
         let totalArr    = 0;
+        let idArr       = 0;
 
         $('#list_product').on('select2:select', function (e) {
             // $('input[id="total"]').attr({"max": $('#list_product option:selected').data('total')});

@@ -152,7 +152,7 @@ function getData(type){
     switch(type){
         case 1:
             let paied   = $('#confirm_pay').is(":checked");
-            data = {"id": arrImport.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "paied": paied, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
+            data = {"id": idArr,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "paied": paied, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
             break;
         case 2:
             let price_export    = $('#price').val();
@@ -163,14 +163,15 @@ function getData(type){
             let ship            = $('#ship').val();
             let discount        = $('#discount').val() ? $('#discount').val() : 0;
             let income          = parseInt(price_export) - parseInt(discount) - parseInt(price_import);
-            data = {"id": arrData.length,"pro_id": pro_id, "pro_name": pro_name, "price_export": price_export,"price_import": price_import, "total": total, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name, "discount_percent": discount_percent,"discount_number": discount_number, "ship":ship,"discount":discount, "income": income < 0 ? 0 : income, "type_discount": type_discount};
+            data = {"id": idArr,"pro_id": pro_id, "pro_name": pro_name, "price_export": price_export,"price_import": price_import, "total": total, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name, "discount_percent": discount_percent,"discount_number": discount_number, "ship":ship,"discount":discount, "income": income < 0 ? 0 : income, "type_discount": type_discount};
             break;
         case 3:
             id_debt = $('#list_product option:selected').data("id");
-            data = {"id": arrData.length,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "note": note, "report_date": report_date, "id_debt": id_debt, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
+            data = {"id": idArr,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "note": note, "report_date": report_date, "id_debt": id_debt, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
             break;
         default: break;
     }
+    idArr += 1;
     return data;
 }
 
