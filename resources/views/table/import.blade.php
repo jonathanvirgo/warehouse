@@ -90,16 +90,18 @@
             <td>{{$item['note']}}</td>
             <td>{{date('d/m/Y', strtotime($item->report_date))}}</td>
             @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
-            <td class="d-flex" style="color:#000; cursor:pointer">
-              <a onclick="deleteTable('{{$item->id}}', 1)"><span class="material-icons">close</span></a>
-              <a onclick="editTable('{{$item->id}}', 1)"><span class="material-icons">edit</span></a>
+            <td>
+              <div class="d-flex" style="color:#000; cursor:pointer">
+                <a onclick="deleteTable('{{$item->id}}', 1)"><span class="material-icons">close</span></a>
+                <a onclick="editTable('{{$item->id}}', 1)"><span class="material-icons">edit</span></a>
+              </div>
             </td>
             @endif
           </tr>
           @endforeach
           <tr>
             <th colspan="3">Tổng số</th>
-            <th colspan="3">{{number_format($totalPrice)}}</th>
+            <th colspan="4">{{number_format($totalPrice)}}</th>
           </tr>
       </tbody>
     </table>

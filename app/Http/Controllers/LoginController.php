@@ -45,7 +45,7 @@ class LoginController extends Controller
              if(filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 if(Auth::attempt(['email' => $email, 'password' => $password])) {
                     // Kiểm tra đúng email và mật khẩu sẽ chuyển trang
-                    return redirect('dashboard');
+                    return redirect('/');
                 } else {
                     // Kiểm tra không đúng sẽ hiển thị thông báo lỗi
                     return redirect('login')->withErrors(['Email hoặc mật khẩu không đúng!'])->withInput();
