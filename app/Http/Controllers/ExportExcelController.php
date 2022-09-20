@@ -10,6 +10,7 @@ use App\Exports\DebtExport;
 use App\Exports\PayExport;
 use App\Exports\ImportExport;
 use App\Exports\ExportExport;
+use App\Exports\DebtDayExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Exception;
 
@@ -52,6 +53,16 @@ class ExportExcelController extends Controller
             } 
         } catch (Exception $e) {
             LogActivityService::addToLog('exportExports-catch', $e->getMessage());
+        }
+    }
+
+    public function debtDay(Request $request){
+        try{
+            if($request->has('warehouse_id') && $request->has('report_date')){
+                return Excel::download(new DebtDayExport($request->warehouse_id, $request->report_date), 'cong_no_'.$request->report_date. Carbon::now()->timestamp .'.xlsx');
+            } 
+        } catch (Exception $e) {
+            LogActivityService::addToLog('debtDayExports-catch', $e->getMessage());
         }
     }
 }

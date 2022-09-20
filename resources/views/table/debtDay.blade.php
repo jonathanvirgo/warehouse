@@ -14,6 +14,7 @@
   <div class="container-main">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
       <h1 class="h2">Bảng công nợ theo ngày</h1>
+      <!-- <a onclick="exportExcel('debtDay')" class="btn btn-outline-dark">Xuất Excel</a> -->
     </div>
     
     <form method="get" action="" id="search_form">

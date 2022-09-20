@@ -250,8 +250,6 @@ class PayController extends Controller
                     'day'           => $request->get('day', date('d-m-Y', strtotime(Carbon::today()))),
                     'warehouse_id'  => $request->get('warehouse_id', 1)
                 ];
-                // $imports    = ImportService::getImportFollowDay($search);
-                // $pays       = PayService::getPayFollowDay($search);
 
                 // $sql = "SELECT import.pro_id,import.price,import.total_import,pay.total_pay,(import.total_import - pay.total_pay) AS total FROM (SELECT SUM(total) AS total_import, pro_id, price FROM imports WHERE warehouse_id = ".$search->warehouse_id." AND DATE(report_date) <= '". date('Y-m-d', strtotime($search->day)) ."' GROUP BY pro_id, price) AS `import` LEFT JOIN (SELECT SUM(total) AS total_pay, pro_id, price FROM pay WHERE warehouse_id = ".$search->warehouse_id." AND DATE(report_date) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS pay ON import.pro_id = pay.pro_id";
                 $sql = "SELECT * FROM (SELECT import.pro_id,import.price,import.total_import,pay.total_pay FROM (SELECT SUM(total) AS total_import, pro_id, price FROM imports WHERE `warehouse_id` = ".$search->warehouse_id." AND DATE(`report_date`) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS `import` LEFT JOIN (SELECT SUM(total) AS total_pay, pro_id, price FROM pay WHERE `warehouse_id` = ".$search->warehouse_id." AND DATE(`report_date`) <= '".date('Y-m-d', strtotime($search->day))."' GROUP BY pro_id, price) AS pay ON import.`pro_id` = pay.pro_id AND import.`price` = pay.price) AS `total` INNER JOIN products ON products.id = total.pro_id";

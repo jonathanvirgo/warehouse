@@ -57,6 +57,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('export/pay', 'ExportExcelController@pay');
     Route::get('export/import', 'ExportExcelController@import');
     Route::get('export/export', 'ExportExcelController@export');
+    Route::get('export/debt-day', 'ExportExcelController@debtDay');
 });
 
 Route::group(['prefix' => 'admin'], function () {

@@ -823,6 +823,10 @@ function exportExcel(type){
         case 'debt':
             location.href       = '/export/debt?warehouse_id='+warehouse_id+'&pro_id='+pro_id;  
             break;
+        case 'debtDay':
+            reportdate          = $('#report_date').val();
+            location.href       = '/export/debt-day?warehouse_id='+warehouse_id+'&report_date='+reportdate;  
+            break;
         case 'pay':
             location.href       = '/export/pay?warehouse_id='+warehouse_id+'&pro_id='+pro_id+'&report_date='+reportdate;  
             break;
