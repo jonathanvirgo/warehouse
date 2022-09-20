@@ -816,17 +816,12 @@ function saveProfile(){
 }
 
 function exportExcel(type){
-      switch(type){
+    switch(type){
         case 'debt':
             let warehouse_id    = $('#list_warehouse').val();
             let pro_id          = $('#list_product').val();
-            location.href       = '/export/debt?warehouse_id='+warehouse_id+'&pro_id='+pro_id;
-            // $.post('/export/debt',{warehouse_id: warehouse_id, pro_id: pro_id}, function(response, status){
-            //     if (response){
-            //         displayMessage(response.message);
-            //     }
-            // });   
+            location.href       = '/export/debt?warehouse_id='+warehouse_id+'&pro_id='+pro_id;  
             break;
         default: break;
-      }
+    }
 }

@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class DebtExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
 {
+    
     use Exportable;
     private $warehouse_id;
     private $product_id;
@@ -52,13 +53,28 @@ class DebtExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
      * @return array
      */
     public function map($debt): array
+    {   
+        if(isset($debt['is_summary']) && $debt['is_summary'] == true){
+            return [null, 'Tổng Số', null, null, $debt['sum_value']];
+        }else{
+            return [
+                $debt->id,
+                $debt->name,
+                $debt->total,
+                $debt->price,
+                $debt->total * $debt->price
+            ];
+        }
+    }
+
+    public function prepareRows($debts)
     {
-        return [
-            $debt->id,
-            $debt->name,
-            $debt->total,
-            $debt->price,
-            $debt->total * $debt->price
+        $sum = 0;
+        foreach($debts as $debt) $sum += $debt->total * $debt->price;
+        $debts[]=[
+            'is_summary'=>true,
+            'sum_value'=>$sum
         ];
+        return $debts;
     }
 }
