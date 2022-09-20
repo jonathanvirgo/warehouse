@@ -24,12 +24,11 @@ class DebtExport implements FromQuery, WithHeadings, WithMapping, ShouldAutoSize
 
     public function query()
     {
+        $query = Debt::query()->where('total','>',0)->where("warehouse_id", $this->warehouse_id)->join('products', 'debts.pro_id', '=', 'products.id');
         if($this->pro_id !== 0){
-            return Debt::query()->where('total','>',0)->where("warehouse_id", $this->warehouse_id)->where("pro_id", $this->pro_id)->join('products', 'debts.pro_id', '=', 'products.id');
-        }else{
-            return Debt::query()->where('total','>',0)->where("warehouse_id", $this->warehouse_id)->with('product')->join('products', 'debts.pro_id', '=', 'products.id');
+            $query->where("pro_id", $this->pro_id);
         }
-        
+        return $query;
     }
     /**
      * Set header columns

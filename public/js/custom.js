@@ -816,11 +816,22 @@ function saveProfile(){
 }
 
 function exportExcel(type){
+    let warehouse_id    = $('#list_warehouse').val();
+    let pro_id          = $('#list_product').val();
+    let reportdate      = $('#reportdate').val();
     switch(type){
         case 'debt':
-            let warehouse_id    = $('#list_warehouse').val();
-            let pro_id          = $('#list_product').val();
             location.href       = '/export/debt?warehouse_id='+warehouse_id+'&pro_id='+pro_id;  
+            break;
+        case 'pay':
+            location.href       = '/export/pay?warehouse_id='+warehouse_id+'&pro_id='+pro_id+'&report_date='+reportdate;  
+            break;
+        case 'import':
+            location.href       = '/export/import?warehouse_id='+warehouse_id+'&pro_id='+pro_id+'&report_date='+reportdate;  
+            break;
+        case 'export':
+            let typeDiscount = $('#list_discount').val();
+            location.href       = '/export/export?warehouse_id='+warehouse_id+'&pro_id='+pro_id+'&report_date='+reportdate+'&type_discount='+typeDiscount;  
             break;
         default: break;
     }
