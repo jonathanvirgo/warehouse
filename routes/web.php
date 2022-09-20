@@ -52,6 +52,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('user/profile', 'UserController@index');
     Route::post('user/store', 'UserController@store');
+
+    Route::get('export/debt', 'ExportExcelController@debt');
 });
 
 Route::group(['prefix' => 'admin'], function () {
