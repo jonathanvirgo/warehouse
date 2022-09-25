@@ -592,15 +592,15 @@ function deleteTable(id, type){
                 text: 'Đồng ý',
                 action:function () {
                     let url = "/import/delete";
-                    switch(type){
-                        case 2:
-                            url = "/export/delete";
-                            break;
-                        case 3:
-                            url = "/pay/delete";
-                            break;
-                        default: break;
-                    }
+                    // switch(type){
+                    //     case 2:
+                    //         url = "/export/delete";
+                    //         break;
+                    //     case 3:
+                    //         url = "/pay/delete";
+                    //         break;
+                    //     default: break;
+                    // }
                     
                     let data = {"id" : id, "type": type};
                     callAjax(url, data);
