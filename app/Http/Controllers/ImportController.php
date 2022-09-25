@@ -219,6 +219,7 @@ class ImportController extends Controller
                         $export = Export::find($request->id);
                         if($export){
                             $export->delete();
+                            $result['url'] = '/export/list';
                         }else{
                             $result['status'] = false;
                             $result['message'] = "Không tồn tại dữ liệu";
@@ -232,6 +233,7 @@ class ImportController extends Controller
                                 $debt->update(["total" => ($debt->total + $pay->total)]);
                             }
                             $pay->delete();
+                            $result['url'] = '/pay/list';
                         }else{
                             $result['status'] = false;
                             $result['message'] = "Không tồn tại dữ liệu";
