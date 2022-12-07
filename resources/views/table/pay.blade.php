@@ -33,7 +33,7 @@
                   @if (!empty($products))
                       @foreach ($products as $item)
                           <?php $selected_pro = $item['pro_id'] == $search->pro_id ? 'selected="selected"' : ''; ?>
-                          <option {{$selected_pro}} value="{{ $item['pro_id'] }}">{{ $item->product->name }}</option>
+                          <option {{$selected_pro}} value="{{ $item['pro_id'] }}">{{isset($item->product) ? $item->product->name : '' }}</option>
                       @endforeach
                   @endif
               </select>
@@ -84,7 +84,7 @@
       <tbody>
           @foreach ($pays as $item)
           <tr>
-            <td>{{$item->product->name}}</td>
+            <td>{{isset($item->product) ? $item->product->name : ''}}</td>
             <td>{{$item['total']}}</td>
             <td>{{number_format($item['price'])}}</td>
             <td>{{number_format($item['price'] * $item['total'])}}</td>

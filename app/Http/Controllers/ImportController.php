@@ -203,7 +203,7 @@ class ImportController extends Controller
                         $import = Import::find($request->id);
                         if($import){
                             $debt = Debt::where("pro_id", $import->pro_id)->where("price", $import->price)->first();
-                            if(!empty($debt) && $debt->total > $import->total){
+                            if(!empty($debt) && $debt->total >= $import->total){
                                 $debt->update(["total" => ($debt->total - $import->total)]);
                                 $import->delete();
                             }else{
