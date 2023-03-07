@@ -55,10 +55,14 @@ class ImportController extends Controller
                 $arrImport = json_decode($request->arrImport);
                 if(count($arrImport) > 0){
                     if($request->has('id')){
+                        // nếu sửa import
                         $import = Import::find($request->id);
                         if($import){
+                            // dữ liệu sửa
                             $item = $arrImport[0];
+                            // nếu còn công nợ
                             $debt = Debt::where("pro_id", $import->pro_id)->where('warehouse_id',$import->warehouse_id)->where("price", $import->price)->first();
+                            // chênh lệch dữ liệu sửa và dữ liệu gốc
                             $changeTotal = $item->total - $import->total;
                             //Không trống công nợ
                             if(!empty($debt)){
@@ -73,9 +77,11 @@ class ImportController extends Controller
                                         return response()->json($result, 200);
                                     }
                                 }else{
+                                    // Tăng nhập hàng tăng công nợ
                                     $debt->update(["total" => ($debt->total + $changeTotal)]);
                                 }
                             }else{
+                                // không có công nợ không được sửa nhập hàng
                                 $result['status'] = false;
                                 $result['message'] = "Đã thanh toán hết số lượng sản phẩm";
                                 return response()->json($result, 200);
