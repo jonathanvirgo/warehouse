@@ -167,14 +167,16 @@ class ImportController extends Controller
                     ['id' => 'report_date|asc', 'name' => 'Ngày nhập tăng dần'],
                     ['id' => 'report_date|desc', 'name' => 'Ngày nhập giảm dần'],
                 ];
-                $products       = ProductService::getSearchProductImport($user);
-                $imports        = ImportService::getAllImport($search);
+                
                 $totalPrice     = 0;
                 if($user->role_id == 4){
                     $warehouses     = Warehouse::where('id', $user->warehouse_id)->get();
+                    $search->warehouse_id = $warehouses[0]["id"];
                 }else{
                     $warehouses = Warehouse::where('campain_id',$user->campain_id)->get();
                 }
+                $products       = ProductService::getSearchProductImport($user);
+                $imports        = ImportService::getAllImport($search);
                 foreach($imports as $item){
                     $totalPrice += $item['price'] * $item['total'];
                 }
