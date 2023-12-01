@@ -33,7 +33,7 @@
                   @if (!empty($products))
                       @foreach ($products as $item)
                           <?php $selected_pro = $item['pro_id'] == $search->pro_id ? 'selected="selected"' : ''; ?>
-                          <option {{$selected_pro}} value="{{ $item['pro_id'] }}">{{ $item->product->name }}</option>
+                          <option {{$selected_pro}} value="{{ $item['pro_id'] }}">{{!empty($item->product) && !empty($item->product->name) ? $item->product->name : ''}}</option>
                       @endforeach
                   @endif
               </select>
