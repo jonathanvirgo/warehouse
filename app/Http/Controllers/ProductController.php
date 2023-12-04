@@ -14,8 +14,8 @@ class ProductController extends Controller
 {
     public function list(Request $request){
         try {
-            if(Auth::check()){
-                $user       = Auth::user();
+            $user       = Auth::user();
+            if(Auth::check() && in_array($user->role_id, [1,2])){
                 $search         = (object)[
                     'order_by'    => $request->get('order_by','id|desc'),
                     'pro_id'      => $request->get('pro_id', 0)
@@ -46,8 +46,8 @@ class ProductController extends Controller
     public function getPrice(Request $request){
         $result = array('status' => true, 'message' => 'Success', 'price' => 0);
         try {
-            if(Auth::check()){
-                $user       = Auth::user();
+            $user       = Auth::user();
+            if(Auth::check() && in_array($user->role_id, [1,2])){
                 $inputs = [
                     "pro_id"        => (int)$request->pro_id,
                     "warehouse_id"  => (int)$request->warehouse_id,
@@ -57,7 +57,7 @@ class ProductController extends Controller
                 $result['price'] = isset($price->price) ? $price->price : 0;
             }else{
                 $result['status'] = false;
-                $result['message'] = 'Bạn chưa đăng nhập!';
+                $result['message'] = 'Bạn không có quyền!';
             }
             return response()->json($result, 200);
         } catch (Exception $e) {
@@ -71,8 +71,8 @@ class ProductController extends Controller
     public function getInventory(Request $request){
         $result = array('status' => true, 'message' => 'Success');
         try {
-            if(Auth::check()){
-                $user       = Auth::user();
+            $user       = Auth::user();
+            if(Auth::check() && in_array($user->role_id, [1,2])){
                 $inputs = (object)[
                     "warehouse_id"  => (int)$request->warehouse_id
                 ];
@@ -80,7 +80,7 @@ class ProductController extends Controller
                 $result['data'] = $data;
             }else{
                 $result['status'] = false;
-                $result['message'] = 'Bạn chưa đăng nhập!';
+                $result['message'] = 'Bạn không có quyền!';
             }
             return response()->json($result, 200);
         } catch (Exception $e) {

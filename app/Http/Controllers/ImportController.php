@@ -21,8 +21,8 @@ class ImportController extends Controller
     public function index(Request $request, $id = null){
         $import     = collect([]);
         try {
-            if(Auth::check()){
-                $user       = Auth::user();
+            $user       = Auth::user();
+            if(Auth::check() && in_array($user->role_id, [1,2])){
                 $products   = ProductService::getSearchProduct($user);
                 $today      = date('d-m-Y', strtotime(Carbon::today()));
                 $warehouses = Warehouse::where('campain_id',$user->campain_id)->get();
@@ -48,10 +48,9 @@ class ImportController extends Controller
 
     public function store(Request $request){
         $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/import/list');
-
         try {
-            if($request->has('arrImport') && Auth::check()){
-                $user   = Auth::user();
+            $user   = Auth::user();
+            if($request->has('arrImport') && Auth::check() && in_array($user->role_id, [1,2])){
                 $arrImport = json_decode($request->arrImport);
                 if(count($arrImport) > 0){
                     if($request->has('id')){
@@ -202,9 +201,9 @@ class ImportController extends Controller
     }
 
     public function delete(Request $request){
-        $user       = Auth::user();
         $result = array('status' => true, 'message' => 'Xoá thành công', 'url' => '/import/list');
         try {
+            $user       = Auth::user();
             if($request->has('id') && Auth::check() && in_array($user->role_id, [1,2])){
                 switch($request->type){
                     case 1:

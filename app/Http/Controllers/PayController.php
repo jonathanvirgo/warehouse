@@ -22,8 +22,8 @@ class PayController extends Controller
     public function index(Request $request, $id = null){
         try {
             $pay     = collect([]);
-            if(Auth::check()){
-                $user           = Auth::user();
+            $user           = Auth::user();
+            if(Auth::check() && in_array($user->role_id, [1,2])){
                 $search         = (object)[
                     'warehouse_id'  => $request->get('warehouse_id', 1)
                 ];
@@ -54,8 +54,8 @@ class PayController extends Controller
         $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/pay/list');
 
         try {
-            if($request->has('arrPay') && Auth::check()){
-                $user   = Auth::user();
+            $user   = Auth::user();
+            if($request->has('arrPay') && Auth::check() && in_array($user->role_id, [1,2])){
                 $arrPay = json_decode($request->arrPay);
                 if(count($arrPay) > 0){
                     if($request->has('id')){

@@ -17,18 +17,23 @@ class UserController extends Controller
         $user     = collect([]);
         try {
             if(Auth::check()){
-                $users      = User::all();
-                $warehouses = Warehouse::all();
-                $campains   = Campain::all();
-                if(!empty($id)){
-                    $user = User::find($id);
+                $userLogin  = Auth::user();
+                if($userLogin->role_id == 1){
+                    $users      = User::all();
+                    $warehouses = Warehouse::all();
+                    $campains   = Campain::all();
+                    if(!empty($id)){
+                        $user = User::find($id);
+                    }
+                    return view('common.user',compact(
+                        'warehouses',
+                        'users',
+                        'user',
+                        'campains'
+                    ));
+                }else{
+                    return view('dashboard');
                 }
-                return view('common.user',compact(
-                    'warehouses',
-                    'users',
-                    'user',
-                    'campains'
-                ));
             }else{
                 $message = 'Liên kết không tồn tại';
                 return view('404', compact('message'));
@@ -41,9 +46,9 @@ class UserController extends Controller
     }
 
     public function store(Request $request){
-        $user   = Auth::user();
-        $result = array('status' => true, 'message' => 'Lưu thành công', 'url' => '/user/profile');
+        $result = array('status' => false, 'message' => 'Lỗi', 'url' => '/user/profile');
         try {
+            $user   = Auth::user();
             if(Auth::check() && $user->role_id == 1){
                 if($request->has('id')){
                     $user = User::find($request->id);
@@ -52,13 +57,13 @@ class UserController extends Controller
                             "warehouse_id"      => empty($request->warehouse_id) ? null : (int)$request->warehouse_id,
                             "campain_id"        => (int)$request->campain_id,
                         ];
+                        $result['status']  = true;
+                        $result['message'] = "Lưu thành công";
                         $user->update($inputs);
                     }else{
-                        $result['status']  = false;
                         $result['message'] = "Không tồn tại tài khoản";
                     }
                 }else{
-                    $result['status']  = false;
                     $result['message'] = "Thiếu id người dùng";
                 }
             }
