@@ -57,7 +57,7 @@
             <?php ?>
             @foreach ($data as $item)
             <tr>
-              <td>{{$item->name}}</td>
+              <td name="{{$item->product->id}}">{{$item->name}}</td>
               <td>{{number_format($item->price)}}</td>
               <td>{{number_format($item->total_import)}}</td>
               <td>{{number_format(empty($item->total_pay) ? 0 : $item->total_pay)}}</td>

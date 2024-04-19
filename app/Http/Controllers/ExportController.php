@@ -123,44 +123,52 @@ class ExportController extends Controller
                             $export = Export::find($request->id);
                             if($export){
                                 $item = $arrExport[0];
-                                $inputs = [
-                                    "pro_id"        => $item->pro_id,
-                                    "total"         => (int)$item->total,
-                                    "price_import"  => (int)$item->price_import,
-                                    "price_export"  => (int)$item->price_export,
-                                    "report_date"   => date('Y-m-d', strtotime($item->report_date)),
-                                    "discount"      => (int)$item->discount,
-                                    "income"        => (int)$item->income,
-                                    "note"          => $item->note,
-                                    "ship"          => (int)$item->ship,
-                                    "discount_number" => (int)$item->discount_number,
-                                    "warehouse_id"  => $item->warehouse_id,
-                                    "type_discount" => $item->type_discount
-                                ];
-                                $export->update($inputs);
+                                if(!empty($item->pro_id)){
+                                    $inputs = [
+                                        "pro_id"        => $item->pro_id,
+                                        "total"         => (int)$item->total,
+                                        "price_import"  => (int)$item->price_import,
+                                        "price_export"  => (int)$item->price_export,
+                                        "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                        "discount"      => (int)$item->discount,
+                                        "income"        => (int)$item->income,
+                                        "note"          => $item->note,
+                                        "ship"          => (int)$item->ship,
+                                        "discount_number" => (int)$item->discount_number,
+                                        "warehouse_id"  => $item->warehouse_id,
+                                        "type_discount" => $item->type_discount
+                                    ];
+                                    $export->update($inputs);
+                                }else{
+                                    $result['status']  = false;
+                                    $result['message'] = "Thiếu id sản phẩm"; 
+                                }
                             }else{
                                 $result['status']  = false;
                                 $result['message'] = "Không tồn tại bản ghi";
                             }
                         }else{
+                            // Tạo mới
                             foreach($arrExport as $item){
-                                $inputs = [
-                                    "pro_id"        => $item->pro_id,
-                                    "total"         => (int)$item->total,
-                                    "price_import"  => (int)$item->price_import,
-                                    "price_export"  => (int)$item->price_export,
-                                    "report_date"   => date('Y-m-d', strtotime($item->report_date)),
-                                    "discount"      => (int)$item->discount,
-                                    "income"        => (int)$item->income,
-                                    "note"          => $item->note,
-                                    "created_by"    => $user->id,
-                                    "ship"          => (int)$item->ship,
-                                    "discount_number" => (int)$item->discount_number,
-                                    "warehouse_id"  => $item->warehouse_id,
-                                    "type_discount" => $item->type_discount,
-                                    "campain_id"    => $user->campain_id
-                                ];
-                                Export::create($inputs);
+                                if(!empty($item->pro_id)){
+                                    $inputs = [
+                                        "pro_id"        => $item->pro_id,
+                                        "total"         => (int)$item->total,
+                                        "price_import"  => (int)$item->price_import,
+                                        "price_export"  => (int)$item->price_export,
+                                        "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                        "discount"      => (int)$item->discount,
+                                        "income"        => (int)$item->income,
+                                        "note"          => $item->note,
+                                        "created_by"    => $user->id,
+                                        "ship"          => (int)$item->ship,
+                                        "discount_number" => (int)$item->discount_number,
+                                        "warehouse_id"  => $item->warehouse_id,
+                                        "type_discount" => $item->type_discount,
+                                        "campain_id"    => $user->campain_id
+                                    ];
+                                    Export::create($inputs);
+                                }
                             }
                         }
                     }else{

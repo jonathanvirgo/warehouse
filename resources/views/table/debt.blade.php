@@ -74,7 +74,7 @@
             <?php ?>
             @foreach ($depts as $item)
             <tr>
-              <td>{{$item->product->name}}</td>
+              <td name="{{$item->product->id}}">{{$item->product->name}}</td>
               <td>{{$item['total']}}</td>
               <td>{{number_format($item['price'])}}</td>
               <td>{{number_format($item['price'] * $item['total'])}}</td>

@@ -84,7 +84,7 @@
       <tbody>
           @foreach ($pays as $item)
           <tr>
-            <td>{{isset($item->product) ? $item->product->name : ''}}</td>
+            <td name="{{isset($item->product) ? $item->product->id : ''}}">{{isset($item->product) ? $item->product->name : ''}}</td>
             <td>{{$item['total']}}</td>
             <td>{{number_format($item['price'])}}</td>
             <td>{{number_format($item['price'] * $item['total'])}}</td>

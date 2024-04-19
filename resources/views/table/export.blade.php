@@ -105,7 +105,7 @@
       <tbody>
         @foreach ($exports as $item)
           <tr>
-            <td>{{$item->product->name}}</td>
+            <td name="{{$item->product->id}}">{{$item->product->name}}</td>
             <td>{{$item['total']}}</td>
             @if(in_array(Auth::user()->role_id, [1,2]))
             <td>{{number_format($item['price_import'])}}</td>

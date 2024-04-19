@@ -57,7 +57,7 @@
           
             @foreach ($products as $item)
             <tr>
-              <td>{{$item['name']}}</td>
+              <td name="{{$item['id']}}">{{$item['name']}}</td>
               <td>{{$item->brand->name}}</td>
             </tr>
             @endforeach

@@ -148,53 +148,61 @@ function getData(type){
     let note            = $('#note').val();
     let warehouse_id    = $('#list_warehouse').val();
     let warehouse_name  = $('#list_warehouse option:selected').text();
-    let data;
-    switch(type){
-        case 1:
-            let paied   = $('#confirm_pay').is(":checked");
-            data = {"id": idArr,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "paied": paied, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
-            break;
-        case 2:
-            let price_export    = $('#price').val();
-            let price_import    = $('#list_product option:selected').data('price');
-            let discount_percent = $('#discount_percent').val();
-            let discount_number = $('#discount_number').val();
-            let type_discount   = $('#list_discount').val();
-            let ship            = $('#ship').val();
-            let discount        = $('#discount').val() ? $('#discount').val() : 0;
-            let income          = parseInt(price_export) - parseInt(discount) - parseInt(price_import);
-            data = {"id": idArr,"pro_id": pro_id, "pro_name": pro_name, "price_export": price_export,"price_import": price_import, "total": total, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name, "discount_percent": discount_percent,"discount_number": discount_number, "ship":ship,"discount":discount, "income": income < 0 ? 0 : income, "type_discount": type_discount};
-            break;
-        case 3:
-            id_debt = $('#list_product option:selected').data("id");
-            data = {"id": idArr,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "note": note, "report_date": report_date, "id_debt": id_debt, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
-            break;
-        default: break;
+    let data            = {};
+    if(pro_id){
+        switch(type){
+            case 1:
+                let paied   = $('#confirm_pay').is(":checked");
+                data = {"id": idArr,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "paied": paied, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
+                break;
+            case 2:
+                let price_export    = $('#price').val();
+                let price_import    = $('#list_product option:selected').data('price');
+                let discount_percent = $('#discount_percent').val();
+                let discount_number = $('#discount_number').val();
+                let type_discount   = $('#list_discount').val();
+                let ship            = $('#ship').val();
+                let discount        = $('#discount').val() ? $('#discount').val() : 0;
+                let income          = parseInt(price_export) - parseInt(discount) - parseInt(price_import);
+                data = {"id": idArr,"pro_id": pro_id, "pro_name": pro_name, "price_export": price_export,"price_import": price_import, "total": total, "note": note, "report_date": report_date, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name, "discount_percent": discount_percent,"discount_number": discount_number, "ship":ship,"discount":discount, "income": income < 0 ? 0 : income, "type_discount": type_discount};
+                break;
+            case 3:
+                let id_debt = $('#list_product option:selected').data("id");
+                data = {"id": idArr,"pro_id": pro_id, "pro_name": pro_name, "price": price, "total": total, "note": note, "report_date": report_date, "id_debt": id_debt, "warehouse_id":warehouse_id, "warehouse_name": warehouse_name};
+                break;
+            default: break;
+        }
+        idArr += 1;
     }
-    idArr += 1;
     return data;
 }
 
 function addImport(){
     let dataImport = getData(1);
-    arrImport.push(dataImport);
-    let html = addImportHtml(dataImport);
-    $(".table-responsive").find("tbody").append(html);
+    if(dataImport.length > 0){
+        arrImport.push(dataImport);
+        let html = addImportHtml(dataImport);
+        $(".table-responsive").find("tbody").append(html);
+    }
 }
 
 function addExport(){
     let dataExport = getData(2);
-    arrData.push(dataExport);
-    let html = addExportHtml(dataExport);
-    $(".table-responsive").find("tbody").append(html);
+    if(dataExport.length > 0){
+        arrData.push(dataExport);
+        let html = addExportHtml(dataExport);
+        $(".table-responsive").find("tbody").append(html);
+    }
 }
 
 function addPay(){
     let dataPay = getData(3);
-    arrData.push(dataPay);
-    let html = addPayHtml(dataPay);
-    $(".table-responsive").find("tbody").append(html);
-    totalArr = 0;
+    if(dataPay.length > 0){
+        arrData.push(dataPay);
+        let html = addPayHtml(dataPay);
+        $(".table-responsive").find("tbody").append(html);
+        totalArr = 0;
+    }
 }
 
 function addImportHtml(data, id = ''){
@@ -526,6 +534,7 @@ function save(type, id = ''){
                             data = {"arrExport" : JSON.stringify(arrData)};
                             break;
                         case 3:
+                            console.log('arr Pay', arrData);
                             url = "/pay/store";
                             data = {"arrPay" : JSON.stringify(arrData)};
                             break;
@@ -570,7 +579,7 @@ function callAjax(url, data){
             loading.hide();
             if (result.status) {
                 displayMessage(result.message);
-                window.location.href = result.url;
+                // window.location.href = result.url;
             } else {
                 displayError(result.message);
             }
@@ -622,14 +631,17 @@ function deleteTable(id, type){
 function getPrice(pro_id, warehouse_id, im_export){
     let loading     = $("#loading-page");
     loading.show();
-    $.get('/product/price?pro_id='+ pro_id + '&warehouse_id=' + warehouse_id + '&im_export='+ im_export, function(response){
-        loading.hide();
-        if(response.status){
-            $('#price').val(response.price == 0 ? '' : response.price);
-        }else{
-            displayError(response.message);
-        }
-    });
+    if(pro_id && warehouse_id && im_export){
+        $.get('/product/price?pro_id='+ pro_id + '&warehouse_id=' + warehouse_id + '&im_export='+ im_export, function(response){
+            loading.hide();
+            if(response.status){
+                $('#price').val(response.price == 0 ? '' : response.price);
+            }else{
+                displayError(response.message);
+            }
+        });
+    }
+    
 }
 
 function setPriceAttr(pro_id, warehouse_id, im_export){
@@ -703,74 +715,76 @@ function toggleBtnAdd(isShow){
 
 function saveLocalData(type){
     let data = getData(type)
-    switch(type){
-        case 1:
-            for(let [i, item] of arrImport.entries()){
-                if(item.id == idEdit){   
-                    item.note = data.note;
-                    item.paied = data.paied;
-                    item.price = data.price;
-                    item.pro_id = data.pro_id;
-                    item.pro_name = data.pro_name;
-                    item.report_date = data.report_date;
-                    item.total = data.total;
-                    item.warehouse_id = data.warehouse_id;
-                    item.warehouse_name = data.warehouse_name;
-                    $("#tr_" + idEdit).empty();
-                    addImportHtml(item, '#tr_' + idEdit);
-                    idEdit = null;
-                    break;
+    if(data.length > 0){
+        switch(type){
+            case 1:
+                for(let [i, item] of arrImport.entries()){
+                    if(item.id == idEdit){   
+                        item.note = data.note;
+                        item.paied = data.paied;
+                        item.price = data.price;
+                        item.pro_id = data.pro_id;
+                        item.pro_name = data.pro_name;
+                        item.report_date = data.report_date;
+                        item.total = data.total;
+                        item.warehouse_id = data.warehouse_id;
+                        item.warehouse_name = data.warehouse_name;
+                        $("#tr_" + idEdit).empty();
+                        addImportHtml(item, '#tr_' + idEdit);
+                        idEdit = null;
+                        break;
+                    }
                 }
-            }
-            break;
-        case 2:
-            for(let [i, item] of arrData.entries()){
-                if(item.id == idEdit){   
-                    item.discount           = data.discount;
-                    item.discount_number    = data.discount_number;
-                    item.discount_percent   = data.discount_percent;
-                    item.income             = data.income;
-                    item.note               = data.note;
-                    item.price_export       = data.price_export;
-                    item.price_import       = data.price_import;
-                    item.pro_id             = data.pro_id;
-                    item.pro_name           = data.pro_name;
-                    item.report_date        = data.report_date;
-                    item.ship               = data.ship;
-                    item.total              = data.total;
-                    item.type_discount      = data.type_discount;
-                    item.warehouse_id       = data.warehouse_id;
-                    item.warehouse_name     = data.warehouse_name;
-
-                    $("#tr_" + idEdit).empty();
-                    addExportHtml(item, '#tr_' + idEdit);
-                    idEdit = null;
-                    break;
+                break;
+            case 2:
+                for(let [i, item] of arrData.entries()){
+                    if(item.id == idEdit){   
+                        item.discount           = data.discount;
+                        item.discount_number    = data.discount_number;
+                        item.discount_percent   = data.discount_percent;
+                        item.income             = data.income;
+                        item.note               = data.note;
+                        item.price_export       = data.price_export;
+                        item.price_import       = data.price_import;
+                        item.pro_id             = data.pro_id;
+                        item.pro_name           = data.pro_name;
+                        item.report_date        = data.report_date;
+                        item.ship               = data.ship;
+                        item.total              = data.total;
+                        item.type_discount      = data.type_discount;
+                        item.warehouse_id       = data.warehouse_id;
+                        item.warehouse_name     = data.warehouse_name;
+    
+                        $("#tr_" + idEdit).empty();
+                        addExportHtml(item, '#tr_' + idEdit);
+                        idEdit = null;
+                        break;
+                    }
                 }
-            }
-            break;
-        case 3:
-            for(let [i, item] of arrData.entries()){
-                if(item.id == idEdit){   
-                    item.note = data.note;
-                    item.price = data.price;
-                    item.pro_id = data.pro_id;
-                    item.pro_name = data.pro_name;
-                    item.report_date = data.report_date;
-                    item.total = data.total;
-                    item.warehouse_id = data.warehouse_id;
-                    item.warehouse_name = data.warehouse_name;
-                    
-                    $("#tr_" + idEdit).empty();
-                    addPayHtml(item, '#tr_' + idEdit);
-                    idEdit = null;
-                    break;
+                break;
+            case 3:
+                for(let [i, item] of arrData.entries()){
+                    if(item.id == idEdit){   
+                        item.note = data.note;
+                        item.price = data.price;
+                        item.pro_id = data.pro_id;
+                        item.pro_name = data.pro_name;
+                        item.report_date = data.report_date;
+                        item.total = data.total;
+                        item.warehouse_id = data.warehouse_id;
+                        item.warehouse_name = data.warehouse_name;
+                        
+                        $("#tr_" + idEdit).empty();
+                        addPayHtml(item, '#tr_' + idEdit);
+                        idEdit = null;
+                        break;
+                    }
                 }
-            }
-            break;
-        default: break;
+                break;
+            default: break;
+        }
+        cancelSaveLocalData(type);
     }
-    cancelSaveLocalData(type);
 }
 
 function editTable(id, type){
@@ -790,17 +804,19 @@ function editTable(id, type){
 
 function saveEdit(id, type){
     let data = getData(type);
-    switch(type){
-        case 1:
-            arrImport.push(data);
-            break;
-        case 2:
-        case 3:
-            arrData.push(data);
-            break;
-        default: break;
+    if(data.length > 0){
+        switch(type){
+            case 1:
+                arrImport.push(data);
+                break;
+            case 2:
+            case 3:
+                arrData.push(data);
+                break;
+            default: break;
+        }
+        save(type, id);
     }
-    save(type, id);
 }
 
 function saveProfile(){
@@ -819,24 +835,26 @@ function exportExcel(type){
     let warehouse_id    = $('#list_warehouse').val();
     let pro_id          = $('#list_product').val();
     let reportdate      = $('#reportdate').val();
-    switch(type){
-        case 'debt':
-            location.href       = '/export/debt?warehouse_id='+warehouse_id+'&pro_id='+pro_id;  
-            break;
-        case 'debtDay':
-            reportdate          = $('#report_date').val();
-            location.href       = '/export/debt-day?warehouse_id='+warehouse_id+'&report_date='+reportdate;  
-            break;
-        case 'pay':
-            location.href       = '/export/pay?warehouse_id='+warehouse_id+'&pro_id='+pro_id+'&report_date='+reportdate;  
-            break;
-        case 'import':
-            location.href       = '/export/import?warehouse_id='+warehouse_id+'&pro_id='+pro_id+'&report_date='+reportdate;  
-            break;
-        case 'export':
-            let typeDiscount = $('#list_discount').val();
-            location.href       = '/export/export?warehouse_id='+warehouse_id+'&pro_id='+pro_id+'&report_date='+reportdate+'&type_discount='+typeDiscount;  
-            break;
-        default: break;
+    if(pro_id){
+        switch(type){
+            case 'debt':
+                location.href       = '/export/debt?warehouse_id='+warehouse_id+'&pro_id='+pro_id;  
+                break;
+            case 'debtDay':
+                reportdate          = $('#report_date').val();
+                location.href       = '/export/debt-day?warehouse_id='+warehouse_id+'&report_date='+reportdate;  
+                break;
+            case 'pay':
+                location.href       = '/export/pay?warehouse_id='+warehouse_id+'&pro_id='+pro_id+'&report_date='+reportdate;  
+                break;
+            case 'import':
+                location.href       = '/export/import?warehouse_id='+warehouse_id+'&pro_id='+pro_id+'&report_date='+reportdate;  
+                break;
+            case 'export':
+                let typeDiscount = $('#list_discount').val();
+                location.href       = '/export/export?warehouse_id='+warehouse_id+'&pro_id='+pro_id+'&report_date='+reportdate+'&type_discount='+typeDiscount;  
+                break;
+            default: break;
+        }
     }
 }

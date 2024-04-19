@@ -57,67 +57,74 @@ class ImportController extends Controller
                         // nếu sửa import
                         $import = Import::find($request->id);
                         if($import){
-                            // dữ liệu sửa
-                            $item = $arrImport[0];
-                            // nếu còn công nợ
-                            $debt = Debt::where("pro_id", $import->pro_id)->where('warehouse_id',$import->warehouse_id)->where("price", $import->price)->first();
-                            // chênh lệch dữ liệu sửa và dữ liệu gốc
-                            $changeTotal = $item->total - $import->total;
-                            //Không trống công nợ
-                            if(!empty($debt)){
-                                // Giảm số lượng
-                                if($changeTotal <= 0){
-                                    //Số công nợ lớn hơn số giảm
-                                    if($debt->total >= abs($changeTotal)){
-                                        $debt->update(["total" => ($debt->total + $changeTotal)]);
+                            if(!empty($import->pro_id)){
+                                // dữ liệu sửa
+                                $item = $arrImport[0];
+                                // nếu còn công nợ
+                                $debt = Debt::where("pro_id", $import->pro_id)->where('warehouse_id',$import->warehouse_id)->where("price", $import->price)->first();
+                                // chênh lệch dữ liệu sửa và dữ liệu gốc
+                                $changeTotal = $item->total - $import->total;
+                                //Không trống công nợ
+                                if(!empty($debt)){
+                                    // Giảm số lượng
+                                    if($changeTotal <= 0){
+                                        //Số công nợ lớn hơn số giảm
+                                        if($debt->total >= abs($changeTotal)){
+                                            $debt->update(["total" => ($debt->total + $changeTotal)]);
+                                        }else{
+                                            $result['status'] = false;
+                                            $result['message'] = "Số lượng giảm lớn hơn số lượng còn lại";
+                                            return response()->json($result, 200);
+                                        }
                                     }else{
-                                        $result['status'] = false;
-                                        $result['message'] = "Số lượng giảm lớn hơn số lượng còn lại";
-                                        return response()->json($result, 200);
+                                        // Tăng nhập hàng tăng công nợ
+                                        $debt->update(["total" => ($debt->total + $changeTotal)]);
                                     }
                                 }else{
-                                    // Tăng nhập hàng tăng công nợ
-                                    $debt->update(["total" => ($debt->total + $changeTotal)]);
+                                    // không có công nợ không được sửa nhập hàng
+                                    $result['status'] = false;
+                                    $result['message'] = "Đã thanh toán hết số lượng sản phẩm";
+                                    return response()->json($result, 200);
                                 }
+                                $inputs = [
+                                    "pro_id"        => $item->pro_id,
+                                    "total"         => (int)$item->total,
+                                    "price"         => (int)$item->price,
+                                    "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                    "note"          => $item->note,
+                                    "warehouse_id"  => $item->warehouse_id
+                                ];
+                                $import->update($inputs);   
                             }else{
-                                // không có công nợ không được sửa nhập hàng
-                                $result['status'] = false;
-                                $result['message'] = "Đã thanh toán hết số lượng sản phẩm";
-                                return response()->json($result, 200);
+                                $result['status']  = false;
+                                $result['message'] = "Thiếu id sản phẩm";
                             }
-                            $inputs = [
-                                "pro_id"        => $item->pro_id,
-                                "total"         => (int)$item->total,
-                                "price"         => (int)$item->price,
-                                "report_date"   => date('Y-m-d', strtotime($item->report_date)),
-                                "note"          => $item->note,
-                                "warehouse_id"  => $item->warehouse_id
-                            ];
-                            $import->update($inputs);
                         }else{
                             $result['status']  = false;
                             $result['message'] = "Không tồn tại bản ghi";
                         }
                     }else{
                         foreach($arrImport as $item){
-                            $inputs = [
-                                "pro_id"        => $item->pro_id,
-                                "total"         => (int)$item->total,
-                                "price"         => (int)$item->price,
-                                "report_date"   => date('Y-m-d', strtotime($item->report_date)),
-                                "note"          => $item->note,
-                                "created_by"    => $user->id,
-                                "warehouse_id"  => $item->warehouse_id,
-                                "campain_id"    => $user->campain_id
-                            ];
-                            Import::create($inputs);
-                            if($item->paied == false){
-                                $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price)->where("warehouse_id", $item->warehouse_id)->first();
-                                if($dept){
-                                    $total = $dept->total + $inputs['total'];
-                                    $dept->update(["total" => $total]);
-                                }else{
-                                    Debt::create($inputs);
+                            if(!empty($item->pro_id)){
+                                $inputs = [
+                                    "pro_id"        => $item->pro_id,
+                                    "total"         => (int)$item->total,
+                                    "price"         => (int)$item->price,
+                                    "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                    "note"          => $item->note,
+                                    "created_by"    => $user->id,
+                                    "warehouse_id"  => $item->warehouse_id,
+                                    "campain_id"    => $user->campain_id
+                                ];
+                                Import::create($inputs);
+                                if($item->paied == false){
+                                    $dept = Debt::where("pro_id", $item->pro_id)->where("price", (int)$item->price)->where("warehouse_id", $item->warehouse_id)->first();
+                                    if($dept){
+                                        $total = $dept->total + $inputs['total'];
+                                        $dept->update(["total" => $total]);
+                                    }else{
+                                        Debt::create($inputs);
+                                    }
                                 }
                             }
                         }

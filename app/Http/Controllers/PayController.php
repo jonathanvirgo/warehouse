@@ -61,51 +61,58 @@ class PayController extends Controller
                     if($request->has('id')){
                         $pay = Pay::find($request->id);
                         if($pay){
-                            $item = $arrPay[0];
-                            $debt = Debt::where("pro_id", $pay->pro_id)->where("price", $pay->price)->where('warehouse_id',$pay->warehouse_id)->first();
-                            $changeTotal = $pay->total - $item->total;
-                            //Không trống công nợ
-                            if(!empty($debt)){
-                                // Giảm số lượng
-                                $debt->update(["total" => ($debt->total + $changeTotal)]);
+                            if(!empty($pay->pro_id)){
+                                $item = $arrPay[0];
+                                $debt = Debt::where("pro_id", $pay->pro_id)->where("price", $pay->price)->where('warehouse_id',$pay->warehouse_id)->first();
+                                $changeTotal = $pay->total - $item->total;
+                                //Không trống công nợ
+                                if(!empty($debt)){
+                                    // Giảm số lượng
+                                    $debt->update(["total" => ($debt->total + $changeTotal)]);
+                                }else{
+                                    $result['status'] = false;
+                                    $result['message'] = "Đã thanh toán hết số lượng sản phẩm";
+                                    return response()->json($result, 200);
+                                }
+                                $inputs = [
+                                    "pro_id"        => $item->pro_id,
+                                    "total"         => (int)$item->total,
+                                    "price"         => (int)$item->price,
+                                    "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                    "note"          => $item->note,
+                                    "warehouse_id"  => $item->warehouse_id
+                                ];
+                                $pay->update($inputs);
                             }else{
-                                $result['status'] = false;
-                                $result['message'] = "Đã thanh toán hết số lượng sản phẩm";
-                                return response()->json($result, 200);
+                                $result['status']  = false;
+                                $result['message'] = "Thiếu id sản phẩm";
                             }
-                            $inputs = [
-                                "pro_id"        => $item->pro_id,
-                                "total"         => (int)$item->total,
-                                "price"         => (int)$item->price,
-                                "report_date"   => date('Y-m-d', strtotime($item->report_date)),
-                                "note"          => $item->note,
-                                "warehouse_id"  => $item->warehouse_id
-                            ];
-                            $pay->update($inputs);
                         }else{
                             $result['status']  = false;
                             $result['message'] = "Không tồn tại bản ghi";
                         }
                     }else{
                         foreach($arrPay as $item){
-                            $inputs = [
-                                "pro_id"        => $item->pro_id,
-                                "total"         => (int)$item->total,
-                                "price"         => (int)$item->price,
-                                "report_date"   => date('Y-m-d', strtotime($item->report_date)),
-                                "note"          => $item->note,
-                                "warehouse_id"  => $item->warehouse_id,
-                                "created_by"    => $user->id,
-                                "campain_id"    => $user->campain_id
-                            ];
-                            if($item->id_debt > 0){
-                                $dept = Debt::find($item->id_debt);
-                                if($dept){
-                                    $total = $dept->total - $inputs['total'];
-                                    $dept->update(["total" => $total]);
+                            if(!empty($item->pro_id)){
+                                $inputs = [
+                                    "pro_id"        => $item->pro_id,
+                                    "total"         => (int)$item->total,
+                                    "price"         => (int)$item->price,
+                                    "report_date"   => date('Y-m-d', strtotime($item->report_date)),
+                                    "note"          => $item->note,
+                                    "warehouse_id"  => $item->warehouse_id,
+                                    "created_by"    => $user->id,
+                                    "campain_id"    => $user->campain_id
+                                ];
+                                if($item->id_debt > 0){
+                                    $dept = Debt::find($item->id_debt);
+                                    if($dept){
+                                        $total = $dept->total - $inputs['total'];
+                                        $dept->update(["total" => $total]);
+                                    }
                                 }
+                                Pay::create($inputs);
                             }
-                            Pay::create($inputs);
                         }
                     }
                 }else{
