@@ -149,6 +149,7 @@ function getData(type){
     let warehouse_id    = $('#list_warehouse').val();
     let warehouse_name  = $('#list_warehouse option:selected').text();
     let data            = {};
+    console.log('getData', pro_id);
     if(pro_id){
         switch(type){
             case 1:
@@ -174,12 +175,13 @@ function getData(type){
         }
         idArr += 1;
     }
+    console.log("data",data);
     return data;
 }
 
 function addImport(){
     let dataImport = getData(1);
-    if(dataImport.length > 0){
+    if(Object.keys(dataImport).length > 0){
         arrImport.push(dataImport);
         let html = addImportHtml(dataImport);
         $(".table-responsive").find("tbody").append(html);
@@ -188,7 +190,7 @@ function addImport(){
 
 function addExport(){
     let dataExport = getData(2);
-    if(dataExport.length > 0){
+    if(Object.keys(dataExport).length > 0){
         arrData.push(dataExport);
         let html = addExportHtml(dataExport);
         $(".table-responsive").find("tbody").append(html);
@@ -197,7 +199,7 @@ function addExport(){
 
 function addPay(){
     let dataPay = getData(3);
-    if(dataPay.length > 0){
+    if(Object.keys(dataPay).length > 0){
         arrData.push(dataPay);
         let html = addPayHtml(dataPay);
         $(".table-responsive").find("tbody").append(html);
@@ -715,7 +717,7 @@ function toggleBtnAdd(isShow){
 
 function saveLocalData(type){
     let data = getData(type)
-    if(data.length > 0){
+    if(Object.keys(data).length > 0){
         switch(type){
             case 1:
                 for(let [i, item] of arrImport.entries()){
@@ -804,7 +806,7 @@ function editTable(id, type){
 
 function saveEdit(id, type){
     let data = getData(type);
-    if(data.length > 0){
+    if(Object.keys(data).length > 0){
         switch(type){
             case 1:
                 arrImport.push(data);
