@@ -31,7 +31,7 @@ class ExportService
                 $query->where("pro_id", $search->pro_id);
             }
 
-            if($search->type_discount){
+            if((int)$search->type_discount !== 0){
                 $query->where("type_discount", $search->type_discount);
             }
 

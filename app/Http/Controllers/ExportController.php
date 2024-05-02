@@ -50,15 +50,15 @@ class ExportController extends Controller
     public function list(Request $request){
         try {
             $user           = Auth::user();
-            if(Auth::check() && in_array($user->role_id, [1,2])){
+            if(Auth::check() && in_array($user->role_id, [1,2,5])){
                 $fromdate       = Carbon::now()->addDays(-30)->format('d-m-Y');
                 $todate         = Carbon::now()->addDays(30)->format('d-m-Y');
                 $search         = (object)[
                     'reportdate'  => $request->get('reportdate', $fromdate.' - '.$todate),
                     'order_by'    => $request->get('order_by','id|desc'),
                     'pro_id'      => $request->get('pro_id', 0),
-                    'warehouse_id'  => $request->get('warehouse_id', 1),
-                    'type_discount' => $request->get('type_discount', 1)
+                    'warehouse_id'  => $request->get('warehouse_id', $user->warehouse_id),
+                    'type_discount' => $request->get('type_discount', 0)
                 ];
                 if ($search->reportdate) {
                     $time     = explode(' - ', trim($search->reportdate), 2);

@@ -52,6 +52,7 @@
           </select>
         </div>
       </div>
+      @if(Auth::user()->role_id == 1 || Auth::user()->role_id == 2)
       <div class="col-12 col-sm-6 col-md-6 col-lg-2">
         <div class="form-group">
           <label class="mb-1"><i class="fa fa-university" aria-hidden="true"></i> Loại</label>
@@ -65,6 +66,7 @@
           </select>
         </div>
       </div>
+      @endif
       <div class="col-12 col-sm-6 col-md-6 col-lg-2">
         <div class="form-group">
           <label class="mb-1"><i class="fa fa-sort" aria-hidden="true"></i> Sắp xếp</label>
