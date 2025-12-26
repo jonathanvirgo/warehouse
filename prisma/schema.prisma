@@ -127,13 +127,15 @@ model Warehouse {
 }
 
 model Product {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(1024)
-  brandId   Int?     @map("brand_id")
-  campainId Int      @default(1) @map("campain_id")
-  image     String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id                 Int      @id @default(autoincrement())
+  name               String   @db.VarChar(1024)
+  brandId            Int?     @map("brand_id")
+  campainId          Int      @default(1) @map("campain_id")
+  image              String?
+  defaultImportPrice Int?     @default(0) @map("default_import_price")
+  defaultExportPrice Int?     @default(0) @map("default_export_price")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
 
   // Relations
   brand   Brand?   @relation(fields: [brandId], references: [id])
