@@ -108,7 +108,7 @@ export default function ReportsPage() {
                                             className="text-xs fill-muted-foreground"
                                         />
                                         <Tooltip
-                                            formatter={(v: number) => formatCurrency(v)}
+                                            formatter={(v) => formatCurrency(Number(v) || 0)}
                                             contentStyle={{
                                                 backgroundColor: 'hsl(var(--card))',
                                                 border: '1px solid hsl(var(--border))',
@@ -137,7 +137,7 @@ export default function ReportsPage() {
                                             className="text-xs fill-muted-foreground"
                                         />
                                         <Tooltip
-                                            formatter={(v: number) => formatCurrency(v)}
+                                            formatter={(v) => formatCurrency(Number(v) || 0)}
                                             contentStyle={{
                                                 backgroundColor: 'hsl(var(--card))',
                                                 border: '1px solid hsl(var(--border))',

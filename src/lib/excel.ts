@@ -51,7 +51,7 @@ export function formatImportsForExcel(data: Array<{
     price?: number
     warehouse?: { name: string }
     reportDate?: string
-    note?: string
+    note?: string | null
     user?: { name: string }
 }>) {
     return data.map(item => ({
@@ -75,7 +75,7 @@ export function formatExportsForExcel(data: Array<{
     income?: number
     warehouse?: { name: string }
     reportDate?: string
-    note?: string
+    note?: string | null
     user?: { name: string }
 }>) {
     return data.map(item => ({
@@ -119,7 +119,7 @@ export function formatPaysForExcel(data: Array<{
     price?: number
     warehouse?: { name: string }
     reportDate?: string
-    note?: string
+    note?: string | null
     user?: { name: string }
 }>) {
     return data.map(item => ({
