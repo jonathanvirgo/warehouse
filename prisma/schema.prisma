@@ -1,0 +1,286 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_DIRECT")
+}
+
+// ============================================
+// Authentication & User
+// ============================================
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique // admin, user, guest, kho, xuat
+  displayName String   @map("display_name")
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  users User[]
+
+  @@map("roles")
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  name            String
+  email           String    @unique
+  emailVerifiedAt DateTime? @map("email_verified_at")
+  password        String
+  avatar          String?
+  roleId          Int       @default(3) @map("role_id") // Default to Guest
+  warehouseId     Int?      @map("warehouse_id")
+  campainId       Int?      @map("campain_id")
+  rememberToken   String?   @map("remember_token")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  role          Role          @relation(fields: [roleId], references: [id])
+  warehouse     Warehouse?    @relation(fields: [warehouseId], references: [id])
+  campain       Campain?      @relation(fields: [campainId], references: [id])
+  imports       Import[]
+  exports       Export[]
+  debts         Debt[]
+  pays          Pay[]
+  logActivities LogActivity[]
+
+  @@map("users")
+}
+
+
+model Session {
+  id           String  @id
+  userId       Int?    @map("user_id")
+  ipAddress    String? @map("ip_address") @db.VarChar(45)
+  userAgent    String? @map("user_agent")
+  payload      String
+  lastActivity Int     @map("last_activity")
+
+  @@index([userId])
+  @@index([lastActivity])
+  @@map("sessions")
+}
+
+// ============================================
+// Core Business Models
+// ============================================
+
+model Campain {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(1024)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  brands     Brand[]
+  warehouses Warehouse[]
+  products   Product[]
+  discounts  Discount[]
+  users      User[]
+  imports    Import[]
+  exports    Export[]
+  debts      Debt[]
+  pays       Pay[]
+
+  @@map("campain")
+}
+
+model Brand {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(1024)
+  campainId Int      @default(1) @map("campain_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  campain  Campain   @relation(fields: [campainId], references: [id])
+  products Product[]
+
+  @@map("brands")
+}
+
+model Warehouse {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(1024)
+  campainId Int      @default(1) @map("campain_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  campain Campain  @relation(fields: [campainId], references: [id])
+  users   User[]
+  imports Import[]
+  exports Export[]
+  debts   Debt[]
+  pays    Pay[]
+
+  @@map("warehouse")
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(1024)
+  brandId   Int?     @map("brand_id")
+  campainId Int      @default(1) @map("campain_id")
+  image     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  brand   Brand?   @relation(fields: [brandId], references: [id])
+  campain Campain  @relation(fields: [campainId], references: [id])
+  imports Import[]
+  exports Export[]
+  debts   Debt[]
+  pays    Pay[]
+
+  @@map("products")
+}
+
+model Discount {
+  id              Int      @id @default(autoincrement())
+  name            String   @db.VarChar(1024)
+  discountPercent Float?   @map("discount_percent")
+  discountNumber  Int?     @map("discount_number")
+  campainId       Int      @default(1) @map("campain_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  campain Campain  @relation(fields: [campainId], references: [id])
+  exports Export[]
+
+  @@map("discount")
+}
+
+// ============================================
+// Transaction Models
+// ============================================
+
+model Import {
+  id          Int       @id @default(autoincrement())
+  proId       Int?      @map("pro_id")
+  total       Int?
+  price       Int?
+  reportDate  DateTime? @map("report_date") @db.Date
+  note        String?
+  createdBy   Int?      @map("created_by")
+  brandId     Int?      @map("brand_id")
+  warehouseId Int       @default(1) @map("warehouse_id")
+  campainId   Int?      @map("campain_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  product   Product?  @relation(fields: [proId], references: [id])
+  user      User?     @relation(fields: [createdBy], references: [id])
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+  campain   Campain?  @relation(fields: [campainId], references: [id])
+
+  @@map("imports")
+}
+
+model Export {
+  id             Int       @id @default(autoincrement())
+  proId          Int       @map("pro_id")
+  priceImport    Int       @map("price_import")
+  priceExport    Int       @map("price_export")
+  total          Int
+  income         Int?
+  discount       Int?
+  brandId        Int?      @map("brand_id")
+  warehouseId    Int       @map("warehouse_id")
+  reportDate     DateTime? @map("report_date") @db.Date
+  note           String?
+  typeDiscount   Int?      @map("type_discount")
+  discountNumber Int?      @map("discount_number")
+  ship           Int?
+  createdBy      Int?      @map("created_by")
+  campainId      Int?      @map("campain_id")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  product      Product   @relation(fields: [proId], references: [id])
+  user         User?     @relation(fields: [createdBy], references: [id])
+  warehouse    Warehouse @relation(fields: [warehouseId], references: [id])
+  campain      Campain?  @relation(fields: [campainId], references: [id])
+  discountType Discount? @relation(fields: [typeDiscount], references: [id])
+
+  @@map("exports")
+}
+
+model Debt {
+  id          Int       @id @default(autoincrement())
+  proId       Int?      @map("pro_id")
+  price       Int?
+  total       Int?
+  reportDate  DateTime? @map("report_date") @db.Date
+  createdBy   Int?      @map("created_by")
+  brandId     Int?      @map("brand_id")
+  warehouseId Int?      @map("warehouse_id")
+  campainId   Int?      @map("campain_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  product   Product?   @relation(fields: [proId], references: [id])
+  user      User?      @relation(fields: [createdBy], references: [id])
+  warehouse Warehouse? @relation(fields: [warehouseId], references: [id])
+  campain   Campain?   @relation(fields: [campainId], references: [id])
+
+  @@map("debts")
+}
+
+model Pay {
+  id          Int       @id @default(autoincrement())
+  proId       Int?      @map("pro_id")
+  total       Int?
+  price       Int?
+  reportDate  DateTime? @map("report_date") @db.Date
+  note        String?
+  createdBy   Int?      @map("created_by")
+  brandId     Int?      @map("brand_id")
+  warehouseId Int       @default(1) @map("warehouse_id")
+  campainId   Int?      @map("campain_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  product   Product?  @relation(fields: [proId], references: [id])
+  user      User?     @relation(fields: [createdBy], references: [id])
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id])
+  campain   Campain?  @relation(fields: [campainId], references: [id])
+
+  @@map("pays")
+}
+
+// ============================================
+// Logging
+// ============================================
+
+model LogActivity {
+  id        Int      @id @default(autoincrement())
+  subject   String?
+  url       String?
+  method    String?
+  ip        String?
+  agent     String?
+  userId    Int?     @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("log_activities")
+}
